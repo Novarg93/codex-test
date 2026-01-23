@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('games', function (Blueprint $table) {
-            $table->renameColumn('image_url', 'image');
-        });
+        if (
+            Schema::hasTable('games')
+            && Schema::hasColumn('games', 'image_url')
+            && !Schema::hasColumn('games', 'image')
+        ) {
+            Schema::table('games', function (Blueprint $table) {
+                $table->renameColumn('image_url', 'image');
+            });
+        }
     }
 
     /**
@@ -21,8 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('games', function (Blueprint $table) {
-            //
-        });
+        if (
+            Schema::hasTable('games')
+            && Schema::hasColumn('games', 'image')
+            && !Schema::hasColumn('games', 'image_url')
+        ) {
+            Schema::table('games', function (Blueprint $table) {
+                $table->renameColumn('image', 'image_url');
+            });
+        }
     }
 };
