@@ -2,7 +2,7 @@
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
 import Breadcrumbs from '@/Components/Breadcrumbs.vue'
 import axios from 'axios'
-import { useCartSummary, summary as cartSummary } from '@/composables/useCartSummary'
+import { useCartSummary } from '@/composables/useCartSummary'
 import { resolveGroupComponent } from '@/Components/product/groups/registry'
 import { useProductOptions } from '@/composables/useProductOptions'
 import { usePricing } from '@/composables/usePricing'
@@ -20,7 +20,7 @@ const props = defineProps<{
 
 const { selectionByGroup, qtyGroup, buildAddToCartPayload } = useProductOptions(props.product)
 const { unitCents, totalCents } = usePricing(props.product, selectionByGroup)
-const { loadSummary } = useCartSummary()
+const { loadSummary, setSummary } = useCartSummary()
 
 // только selector-группы
 const groups = computed(
@@ -66,9 +66,9 @@ const statsModel = computed<number[]>({
 /* ============================
    RARE BUILDER (class/slot/affix)
 ============================ */
-const classGroup  = computed(() => byCodeOrTitle('class', /class|класс/))
-const slotGroup   = computed(() => byCodeOrTitle('slot', /slot|слот|предмет/))
-const affixGroup  = computed(() => byCodeOrTitle('affix', /affix|аффикс|характеристик/))
+const classGroup = computed(() => byCodeOrTitle('class', /class|класс/))
+const slotGroup = computed(() => byCodeOrTitle('slot', /slot|слот|предмет/))
+const affixGroup = computed(() => byCodeOrTitle('affix', /affix|аффикс|характеристик/))
 
 // для редкой логики GA используем 'ga' только если НЕ включён D4
 const gaGroupRare = computed(() => !statsGroupD4.value ? byCodeOrTitle('ga', /\b(ga|greater)\b/) : undefined)
@@ -132,7 +132,7 @@ const affixModel = computed<number[]>({
   set: (v) => {
     const g = affixGroup.value; if (!g) return
     const next = Array.isArray(v) ? v : (v != null ? [Number(v)] : [])
-    ;(selectionByGroup.value as any)[g.id] = next
+      ; (selectionByGroup.value as any)[g.id] = next
   },
 })
 
@@ -168,7 +168,7 @@ onMounted(() => {
       const non = gRare.values?.find(v => Number((v as any)?.meta?.ga_count) === 0)
         ?? gRare.values?.find(v => /(^|\s)non[-\s]?ga($|\s)|\b0\s*ga\b/i.test(String(v.title ?? '')))
         ?? gRare.values?.[0]
-      ;(selectionByGroup.value as any)[gRare.id] = non?.id ?? null
+        ; (selectionByGroup.value as any)[gRare.id] = non?.id ?? null
     }
   }
 
@@ -185,7 +185,7 @@ onMounted(() => {
         gD4.values?.find(v => Number((v as any)?.meta?.ga_count) === 0) ??
         gD4.values?.find(v => /(^|\s)non[-\s]?ga($|\s)|\b0\s*ga\b/i.test(String(v.title ?? ''))) ??
         gD4.values?.[0]
-      ;(selectionByGroup.value as any)[gD4.id] = non?.id ?? null
+        ; (selectionByGroup.value as any)[gD4.id] = non?.id ?? null
     }
   }
 
@@ -305,6 +305,7 @@ async function addToCart() {
     // 1) bundle-товары — отдельно
     const bundleGroups = (props.product.option_groups ?? []).filter((g: any) => g.type === 'bundle')
     const bundleRows: Array<{ product_id: number; qty: number }> = []
+    let lastSummary: any = null
     for (const g of bundleGroups) {
       const sel = (selectionByGroup.value as any)[g.id]
       if (Array.isArray(sel)) {
@@ -317,9 +318,11 @@ async function addToCart() {
     }
     if (bundleRows.length) {
       for (const row of bundleRows) {
-        await axios.post('/cart/add', { product_id: row.product_id, qty: row.qty })
+        const { data } = await axios.post('/cart/add', { product_id: row.product_id, qty: row.qty })
+        if (data?.summary) lastSummary = data.summary
       }
-      await loadSummary()
+      if (lastSummary) setSummary(lastSummary, { refreshWindow: true })
+      else await loadSummary({ force: true })
       return
     }
 
@@ -327,32 +330,32 @@ async function addToCart() {
     const payload = buildAddToCartPayload()
 
     if (gaGroupD4.value && statsGroupD4.value) {
-  const gid = gaGroupD4.value.id
-  // достаём текущее значение GA как число
-  let raw = (selectionByGroup.value as any)[gid]
-  const gaId = raw == null
-    ? null
-    : Number(Array.isArray(raw) ? raw[0] : raw)
+      const gid = gaGroupD4.value.id
+      // достаём текущее значение GA как число
+      let raw = (selectionByGroup.value as any)[gid]
+      const gaId = raw == null
+        ? null
+        : Number(Array.isArray(raw) ? raw[0] : raw)
 
-  if (!gaId) {
-    errors.value = ['Select GA level first.']
-    submitting.value = false
-    return
-  }
+      if (!gaId) {
+        errors.value = ['Select GA level first.']
+        submitting.value = false
+        return
+      }
 
-  // убедимся, что option_value_ids существует и содержит GA
-  const ids = new Set<number>(Array.isArray((payload as any).option_value_ids) ? (payload as any).option_value_ids : [])
-  ids.add(gaId)
+      // убедимся, что option_value_ids существует и содержит GA
+      const ids = new Set<number>(Array.isArray((payload as any).option_value_ids) ? (payload as any).option_value_ids : [])
+      ids.add(gaId)
 
-  // добавим выбранные статы (они иногда теряются, если билдер скрывает служебную группу)
-  const statsIds = Array.isArray(statsModel.value) ? statsModel.value.map(Number) : []
-  for (const id of statsIds) ids.add(id)
+      // добавим выбранные статы (они иногда теряются, если билдер скрывает служебную группу)
+      const statsIds = Array.isArray(statsModel.value) ? statsModel.value.map(Number) : []
+      for (const id of statsIds) ids.add(id)
 
-  ;(payload as any).option_value_ids = Array.from(ids)
+        ; (payload as any).option_value_ids = Array.from(ids)
 
-  // сервер сам помечает GA по статам — не отправляем affix_ga_ids
-  delete (payload as any).affix_ga_ids
-}
+      // сервер сам помечает GA по статам — не отправляем affix_ga_ids
+      delete (payload as any).affix_ga_ids
+    }
 
     const hasD4 = !!statsGroupD4.value
     if (hasD4) {
@@ -363,8 +366,12 @@ async function addToCart() {
       payload.affix_ga_ids = affixGaModel.value ?? []
     }
     const { data } = await axios.post('/cart/add', payload)
-    if (data && data.summary) cartSummary.value = data.summary
-    else await loadSummary()
+
+    if (data?.summary) {
+      setSummary(data.summary, { refreshWindow: true })
+    } else {
+      await loadSummary({ force: true })
+    }
   } catch (e: any) {
     errors.value.push(e?.response?.data?.message || 'Failed to add to cart')
   } finally {
@@ -405,43 +412,22 @@ async function addToCart() {
           </div>
 
           <!-- UNIQUE D4 BUILDER -->
-          <UniqueD4Builder
-            v-if="gaGroupD4 && statsGroupD4"
-            :ga-group="gaGroupD4"
-            :stats-group="statsGroupD4"
-            v-model:ga-selected="gaModel"
-            v-model:stats-selected="statsModel"
-          />
+          <UniqueD4Builder v-if="gaGroupD4 && statsGroupD4" :ga-group="gaGroupD4" :stats-group="statsGroupD4"
+            v-model:ga-selected="gaModel" v-model:stats-selected="statsModel" />
 
           <!-- RARE BUILDER -->
-          <RareItemBuilder
-            v-if="classGroup && slotGroup && affixGroup"
-            :class-group="classGroup"
-            :slot-group="slotGroup"
-            :affix-group="affixGroup"
-            :currency="'USD'"
-            :ga-limit="gaLimit"
-            v-model:class-id="classModel"
-            v-model:slot-id="slotModel"
-            v-model:affix-ids="affixModel"
-            v-model:affix-ga-ids="affixGaModel"
-            @ga-valid="rareGaOk = $event"
-          />
+          <RareItemBuilder v-if="classGroup && slotGroup && affixGroup" :class-group="classGroup"
+            :slot-group="slotGroup" :affix-group="affixGroup" :currency="'USD'" :ga-limit="gaLimit"
+            v-model:class-id="classModel" v-model:slot-id="slotModel" v-model:affix-ids="affixModel"
+            v-model:affix-ga-ids="affixGaModel" @ga-valid="rareGaOk = $event" />
 
           <!-- Остальные группы (кроме служебных rare + D4) -->
           <div v-if="otherGroups.length" class="mt-4 space-y-6">
             <template v-for="group in otherGroups">
-              <div
-                v-if="resolveGroupComponent(group.type, group)"
-                :key="group.id"
-                class="border rounded-lg p-3"
-                :class="triedToSubmit && missingRequiredSet.has(group.id) ? 'border-red-400' : 'border-border'"
-              >
-                <component
-                  :is="resolveGroupComponent(group.type, group)"
-                  :group="group as any"
-                  v-model:selected="(selectionByGroup as any)[group.id]"
-                />
+              <div v-if="resolveGroupComponent(group.type, group)" :key="group.id" class="border rounded-lg p-3"
+                :class="triedToSubmit && missingRequiredSet.has(group.id) ? 'border-red-400' : 'border-border'">
+                <component :is="resolveGroupComponent(group.type, group)" :group="group as any"
+                  v-model:selected="(selectionByGroup as any)[group.id]" />
                 <p v-if="triedToSubmit && missingRequiredSet.has(group.id)" class="mt-1 text-sm text-red-600">
                   Это поле обязательно для выбора
                 </p>

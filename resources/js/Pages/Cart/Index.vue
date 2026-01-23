@@ -13,7 +13,7 @@ import {
 } from '@/Components/ui/breadcrumb'
 import { Link } from '@inertiajs/vue3'
 
-const { summary, loadSummary } = useCartSummary()
+const { summary, loadSummary, setSummary } = useCartSummary()
 
 type CartItem = {
     id: number
@@ -67,11 +67,15 @@ function showOptPrice(opt: ItemOption) {
 
 async function updateQty(item: CartItem, newQty: number) {
     if (newQty < 1) return
-    await axios.post('/cart/update', { item_id: item.id, qty: newQty })
+
+    const { data } = await axios.post('/cart/update', { item_id: item.id, qty: newQty })
+
     item.qty = newQty
     item.line_total_cents = item.unit_price_cents * newQty
     recalc()
-    await loadSummary()
+
+    if (data?.summary) setSummary(data.summary, { refreshWindow: true })
+    else await loadSummary({ force: true })
 }
 
 async function removeItem(item: CartItem) {
@@ -81,14 +85,14 @@ async function removeItem(item: CartItem) {
         items.value = items.value.filter(i => i.id !== item.id)
         recalc()
 
-        if (data && data.summary) {
-            summary.value = data.summary
+        if (data?.summary) {
+            setSummary(data.summary, { refreshWindow: true })
         } else {
-            await loadSummary()
+            await loadSummary({ force: true })
         }
     } catch (e) {
         console.error('removeItem failed', e)
-        await loadSummary()
+        await loadSummary({ force: true })
     }
 }
 </script>
@@ -131,7 +135,7 @@ async function removeItem(item: CartItem) {
                                         </template>
                                         <template v-else>
                                             {{ (opt.value_cents ?? 0) >= 0 ? '+' : '' }}{{ formatPrice(opt.value_cents
-                                            ?? 0) }} {{ opt.scope }}
+                                                ?? 0) }} {{ opt.scope }}
                                         </template>
                                         )
                                     </span>
@@ -162,7 +166,7 @@ async function removeItem(item: CartItem) {
                     <div class="flex justify-end">
                         <Link :href="route('checkout.index')"
                             class="mt-3 px-4 py-2 bg-primary text-primary-foreground  rounded-lg">
-                        Checkout
+                            Checkout
                         </Link>
                     </div>
 
@@ -171,7 +175,7 @@ async function removeItem(item: CartItem) {
                     <div class="flex justify-end">
                         <Link :href="route('login')"
                             class="mt-3 inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg">
-                        Login to checkout
+                            Login to checkout
                         </Link>
                     </div>
                 </template>

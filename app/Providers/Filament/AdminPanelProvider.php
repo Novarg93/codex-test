@@ -10,7 +10,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\View\PanelsRenderHook;
-      // 👈 добавь это
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
@@ -64,13 +63,18 @@ class AdminPanelProvider extends PanelProvider
             //->viteTheme('resources/css/filament/admin/theme.css')
 
             // 👇 Правильный способ подключить Vite JS для панели в v4
-            ->renderHook(
-                'panels::body.end',
-                fn() => view('filament.hooks.realtime-scripts') // подключим наш blade
-            )
-            ->renderHook(
-                PanelsRenderHook::USER_MENU_BEFORE,
-                fn() => view('filament.hooks.realtime-counters-topbar')
-            );
+            ->renderHook('panels::body.end', function () {
+                // не рендерим на auth-страницах панели и для гостя
+                if (request()->routeIs('filament.admin.auth.*') || !auth()->check()) {
+                    return '';
+                }
+                return view('filament.hooks.realtime-scripts');
+            })
+            ->renderHook(PanelsRenderHook::USER_MENU_BEFORE, function () {
+                if (request()->routeIs('filament.admin.auth.*') || !auth()->check()) {
+                    return '';
+                }
+                return view('filament.hooks.realtime-counters-topbar');
+            });
     }
 }

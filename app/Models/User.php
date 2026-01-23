@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Filament\Panel;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable;
 
@@ -99,6 +100,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     protected $hidden = ['password', 'remember_token'];
+    
 
     protected function casts(): array
     {
@@ -108,5 +110,10 @@ class User extends Authenticatable implements MustVerifyEmail
             // ↓ ДОБАВИЛИ: чтобы удобнее работать со сроком кода привязки
             'telegram_link_expires_at' => 'datetime',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_SUPPORT], true);        
     }
 }
