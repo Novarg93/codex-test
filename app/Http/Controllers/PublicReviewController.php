@@ -59,6 +59,47 @@ class PublicReviewController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'image_url']);
 
+        $baseAll = Review::query()
+            ->where('status', Review::STATUS_APPROVED)
+            ->whereNotNull('approved_at');
+
+        $totalAll = (clone $baseAll)->count();
+        $avgAll = (float) ((clone $baseAll)->avg('rating') ?? 0);
+
+        // distribution 1..5
+        $distRaw = (clone $baseAll)
+            ->selectRaw('rating, COUNT(*) as cnt')
+            ->groupBy('rating')
+            ->pluck('cnt', 'rating')
+            ->toArray();
+
+        $dist = [
+            5 => (int)($distRaw[5] ?? 0),
+            4 => (int)($distRaw[4] ?? 0),
+            3 => (int)($distRaw[3] ?? 0),
+            2 => (int)($distRaw[2] ?? 0),
+            1 => (int)($distRaw[1] ?? 0),
+        ];
+
+        // Most reviewed product (по отзывам)
+        $mostReviewed = (clone $baseAll)
+            ->whereNotNull('product_id')
+            ->selectRaw('product_id, product_name, product_image_url, COUNT(*) as cnt')
+            ->groupBy('product_id', 'product_name', 'product_image_url')
+            ->orderByDesc('cnt')
+            ->first();
+
+        // Highest score product (avg rating, с порогом по кол-ву)
+        $minReviews = 5;
+        $highestRated = (clone $baseAll)
+            ->whereNotNull('product_id')
+            ->selectRaw('product_id, product_name, product_image_url, AVG(rating) as avg_rating, COUNT(*) as cnt')
+            ->groupBy('product_id', 'product_name', 'product_image_url')
+            ->having('cnt', '>=', $minReviews)
+            ->orderByDesc('avg_rating')
+            ->orderByDesc('cnt')
+            ->first();
+
         return Inertia::render('Reviews/Index', [
             'filters' => [
                 'rating' => $request->filled('rating')
@@ -91,6 +132,27 @@ class PublicReviewController extends Controller
                 ],
                 'published_at' => optional($r->approved_at)->toDateTimeString(),
             ]),
+            'stats' => [
+                'total' => $totalAll,
+                'avg' => round($avgAll, 1),
+                'dist' => $dist,
+            ],
+            'highlights' => [
+                'most_reviewed' => $mostReviewed ? [
+                    'product_id' => (int)$mostReviewed->product_id,
+                    'name' => $mostReviewed->product_name,
+                    'image_url' => $mostReviewed->product_image_url,
+                    'count' => (int)$mostReviewed->cnt,
+                ] : null,
+                'highest_rated' => $highestRated ? [
+                    'product_id' => (int)$highestRated->product_id,
+                    'name' => $highestRated->product_name,
+                    'image_url' => $highestRated->product_image_url,
+                    'avg' => round((float)$highestRated->avg_rating, 1),
+                    'count' => (int)$highestRated->cnt,
+                    'min_reviews' => $minReviews,
+                ] : null,
+            ],
         ]);
     }
 }
