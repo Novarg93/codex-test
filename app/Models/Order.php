@@ -148,7 +148,7 @@ class Order extends Model
         $this->total_cost_cents   = $costSum ?: null;
         $this->total_profit_cents = $profitSum ?: null;
         $this->margin_bp          = $saleSum > 0 ? intdiv($profitSum * 10000, $saleSum) : null;
-         if ($this->isDirty(['total_cost_cents', 'total_profit_cents', 'margin_bp'])) {
+        if ($this->isDirty(['total_cost_cents', 'total_profit_cents', 'margin_bp'])) {
             $this->save();
         }
     }
@@ -260,5 +260,17 @@ class Order extends Model
     public function promoRedemptions(): HasMany
     {
         return $this->hasMany(PromoRedemption::class);
+    }
+
+    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(
+            \App\Models\Review::class,
+            \App\Models\OrderItem::class,
+            'order_id',       // FK on order_items
+            'order_item_id',  // FK on reviews
+            'id',             // local key on orders
+            'id'              // local key on order_items
+        );
     }
 }

@@ -179,6 +179,23 @@ async function goToStripe() {
     isLoading.value = false;
   }
 }
+
+async function devPaySuccess() {
+  if (isLoading.value) return;
+  isLoading.value = true;
+
+  try {
+    if (nickFormRef.value?.submit) {
+      await nickFormRef.value.submit();
+    }
+
+    const { data } = await axios.post("/checkout/dev-success");
+    window.location.href = data?.redirect ?? route("orders.show", data.order_id);
+  } catch (e) {
+    console.error("Dev success failed", e);
+    isLoading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -192,16 +209,8 @@ async function goToStripe() {
           <div class="border rounded-lg p-4">
             <h2 class="font-semibold mb-3">Items</h2>
 
-            <div
-              v-for="i in props.items"
-              :key="i.id"
-              class="flex gap-4 border rounded-md p-3 mb-2"
-            >
-              <img
-                v-if="i.product.image_url"
-                :src="i.product.image_url"
-                class="w-16 h-16 object-cover rounded"
-              />
+            <div v-for="i in props.items" :key="i.id" class="flex gap-4 border rounded-md p-3 mb-2">
+              <img v-if="i.product.image_url" :src="i.product.image_url" class="w-16 h-16 object-cover rounded" />
               <div class="flex-1">
                 <div class="font-medium">
                   {{ i.product.name }}
@@ -215,10 +224,8 @@ async function goToStripe() {
                 <div v-if="i.options?.length" class="mt-1 text-xs text-muted-foreground">
                   <ul class="list-disc pl-5 space-y-0.5">
                     <li v-for="opt in i.options" :key="opt.id">
-                      <span
-                        v-if="opt.is_ga"
-                        class="text-[10px] mr-2 px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200"
-                      >
+                      <span v-if="opt.is_ga"
+                        class="text-[10px] mr-2 px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">
                         GA
                       </span>
                       <span class="font-medium">
@@ -254,14 +261,8 @@ async function goToStripe() {
 
         <!-- Right: Summary -->
         <div class="lg:col-span-1">
-          <GameNicknameForm
-            ref="nickFormRef"
-            :initial-nickname="props.nickname ?? ''"
-            :required="false"
-            save-url="/checkout/nickname"
-            label="Character nickname for delivery"
-            class="mb-4"
-          />
+          <GameNicknameForm ref="nickFormRef" :initial-nickname="props.nickname ?? ''" :required="false"
+            save-url="/checkout/nickname" label="Character nickname for delivery" class="mb-4" />
 
           <div class="border rounded-lg p-4 sticky top-6">
             <h2 class="font-semibold mb-3">Summary</h2>
@@ -280,10 +281,7 @@ async function goToStripe() {
                 <span>{{ formatPrice(totals.tax_cents) }}</span>
               </li>
 
-              <li
-                v-if="(totals.discount_cents ?? 0) > 0"
-                class="flex justify-between text-green-700"
-              >
+              <li v-if="(totals.discount_cents ?? 0) > 0" class="flex justify-between text-green-700">
                 <span>Discount<span v-if="promo?.code"> ({{ promo.code }})</span></span>
                 <span>-{{ formatPrice(totals.discount_cents) }}</span>
               </li>
@@ -293,21 +291,13 @@ async function goToStripe() {
             <div class="mt-3">
               <label class="block text-sm font-medium mb-1">Promo code</label>
               <div class="flex gap-2">
-                <Input
-                  v-model="promoCodeInput"
-                  type="text"
-                  placeholder="ENTER CODE"
-                  class="flex-1 border rounded-lg px-3 py-2"
-                />
+                <Input v-model="promoCodeInput" type="text" placeholder="ENTER CODE"
+                  class="flex-1 border rounded-lg px-3 py-2" />
                 <Button class="px-3 py-2 border rounded-lg" @click="applyPromo" :disabled="promoApplying">
                   Apply
                 </Button>
-                <Button
-                  v-if="promo?.code"
-                  class="px-3 py-2 border rounded-lg"
-                  @click="removePromo"
-                  :disabled="promoApplying"
-                >
+                <Button v-if="promo?.code" class="px-3 py-2 border rounded-lg" @click="removePromo"
+                  :disabled="promoApplying">
                   Remove
                 </Button>
               </div>
@@ -322,23 +312,15 @@ async function goToStripe() {
               <span>{{ formatPrice(totals.total_cents) }}</span>
             </div>
 
-            <button
-              v-if="!isLoading"
-              class="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg"
-              @click="goToStripe"
-            >
-              Pay with Stripe
+            <button v-if="!isLoading" class="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg"
+              @click="devPaySuccess">
+              Pay (DEV success)
             </button>
 
-            <button
-              v-else
-              disabled
-              aria-busy="true"
-              class="w-full mt-4 px-4 py-2 rounded-lg bg-muted text-muted-foreground flex items-center justify-center gap-2"
-            >
+            <button v-else disabled aria-busy="true"
+              class="w-full mt-4 px-4 py-2 rounded-lg bg-muted text-muted-foreground flex items-center justify-center gap-2">
               <span
-                class="inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
-              ></span>
+                class="inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"></span>
               Redirecting…
             </button>
 

@@ -16,6 +16,16 @@ const props = defineProps<{
   game: Game
   category: Category
   product: ProductWithGroups
+  reviews: Array<{
+    id: number
+    rating: number
+    body: string
+    display_name: string | null
+    avatar_url: string | null
+    is_anonymous: boolean
+    published_at: string | null
+    game: { id: number | null; name: string | null; image_url?: string | null }
+  }>
 }>()
 
 const { selectionByGroup, qtyGroup, buildAddToCartPayload } = useProductOptions(props.product)
@@ -378,6 +388,22 @@ async function addToCart() {
     submitting.value = false
   }
 }
+
+function formatDateShort(value?: string | null) {
+  if (!value) return ""
+
+
+  const isoLike = value.replace(" ", "T")
+  const d = new Date(isoLike)
+
+  if (Number.isNaN(d.getTime())) return value
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(d)
+}
 </script>
 
 <template>
@@ -439,6 +465,56 @@ async function addToCart() {
           <button class="mt-5 px-4 py-2 rounded-lg bg-primary text-primary-foreground" @click.prevent="addToCart">
             {{ submitting ? 'Adding…' : 'Add to cart' }}
           </button>
+
+          <!-- Reviews -->
+          <div class="mt-10 border-t border-border pt-8">
+            <div class="flex items-center justify-between gap-4 mb-4">
+              <h2 class="text-2xl font-semibold">Latest reviews</h2>
+
+              <a :href="route('reviews.public', { product_id: product.id })"
+                class="text-sm underline text-primary hover:opacity-80">
+                See all reviews
+              </a>
+            </div>
+
+            <div v-if="!props.reviews?.length" class="text-sm text-muted-foreground">
+              No reviews yet. Be the first to leave one after delivery.
+            </div>
+
+            <div v-else class="space-y-3">
+              <div v-for="r in props.reviews" :key="r.id" class="border border-border rounded-xl p-4">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex items-start gap-3">
+                    <img v-if="!r.is_anonymous && r.avatar_url" :src="r.avatar_url"
+                      class="w-10 h-10 rounded-full object-cover" :alt="r.display_name ?? 'User'" />
+                    <div v-else class="w-10 h-10 rounded-full bg-muted"></div>
+
+                    <div>
+                      <div class="font-semibold">
+                        {{ r.is_anonymous ? 'Anonymous' : (r.display_name ?? 'Verified customer') }}
+                      </div>
+
+                      <div class="text-xs text-muted-foreground mt-0.5">
+                        <span class="font-medium text-foreground">{{ r.rating }}</span>/5
+                        <span v-if="r.published_at"> · {{ formatDateShort(r.published_at) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-3 whitespace-pre-line text-sm">
+                  {{ r.body }}
+                </div>
+
+                <div v-if="r.game?.name"
+                  class="mt-4 pt-3 border-t border-border flex items-center gap-2 text-xs text-muted-foreground">
+                  <img v-if="r.game.image_url" :src="r.game.image_url" class="w-5 h-5 rounded object-cover"
+                    :alt="r.game.name ?? ''" />
+                  <span>{{ r.game.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

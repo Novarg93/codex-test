@@ -17,7 +17,8 @@ use App\Http\Controllers\{
     SearchController,
     TelegramAuthController,
     GoogleOAuthController,
-    FaqController
+    FaqController,
+    ReviewController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Http;
@@ -92,7 +93,17 @@ Route::middleware(['auth'])->group(function () {
     // опционально:
     Route::post('/social/telegram/refresh-avatar', [TelegramAuthController::class, 'refreshAvatar'])
         ->name('social.telegram.refreshAvatar');
+
+    Route::get('/profile/orders/{order}/items/{item}/review', [ReviewController::class, 'create'])
+        ->name('reviews.create');
+    Route::post('/profile/orders/{order}/items/{item}/review', [ReviewController::class, 'store'])
+        ->name('reviews.store');
 });
+
+
+Route::get('/reviews', [\App\Http\Controllers\PublicReviewController::class, 'index'])
+    ->name('reviews.public');
+
 
 /**
  * Checkout: auth + verified
@@ -109,6 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('checkout.testPending');
     Route::post('/checkout/promo/apply',  [CheckoutController::class, 'applyPromo'])->name('checkout.promo.apply');
     Route::post('/checkout/promo/remove', [CheckoutController::class, 'removePromo'])->name('checkout.promo.remove');
+    Route::post('/checkout/dev-success', [CheckoutController::class, 'devSuccess'])
+        ->name('checkout.devSuccess');
 });
 
 

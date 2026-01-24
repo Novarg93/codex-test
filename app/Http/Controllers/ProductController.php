@@ -23,9 +23,36 @@ class ProductController extends Controller
             $q->select('id', 'product_id', 'type', 'qty_min', 'qty_max', 'qty_step', 'qty_default'),
         ]);
 
+        $latestReviews = \App\Models\Review::query()
+            ->where('status', \App\Models\Review::STATUS_APPROVED)
+            ->whereNotNull('approved_at')
+            ->where('product_id', $product->id)
+            ->orderByDesc('approved_at')
+            ->limit(5)
+            ->get();
+
         return Inertia::render('Product/Show', [
             'game' => $game,
             'category' => $category,
+            'reviews' => $latestReviews->map(fn($r) => [
+                'id' => $r->id,
+                'rating' => (int) $r->rating,
+                'body' => $r->body,
+
+                
+                'is_anonymous' => (bool) $r->is_anonymous,
+
+                
+                'display_name' => $r->is_anonymous ? null : $r->display_name,
+                'avatar_url'   => $r->is_anonymous ? null : $r->avatar_url,
+
+                'published_at' => optional($r->approved_at)->toDateTimeString(),
+                'game' => [
+                    'id' => $r->game_id,
+                    'name' => $r->game_name,
+                    'image_url' => $r->game_image_url,
+                ],
+            ])->values(),
             'product' => [
                 'id'             => $product->id,
                 'name'           => $product->name,

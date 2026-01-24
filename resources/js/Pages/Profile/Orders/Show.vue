@@ -18,9 +18,29 @@ const props = defineProps<{
     needs_nickname: boolean
     shipping_address: any
     items: Array<{
-      product_name: string; qty: number; unit_price_cents: number; line_total_cents: number
-      image_url?: string; options?: Array<{ id: number; title: string; calc_mode: 'absolute' | 'percent'; scope: 'unit' | 'total'; value_cents?: number | null; value_percent?: number | null; is_ga?: boolean; }>
-      ranges?: Array<{ title: string; label: string }>; has_qty_slider?: boolean
+      id: number
+      product_id: number | null
+      product_name: string
+      image_url?: string | null
+      qty: number
+      unit_price_cents: number
+      line_total_cents: number
+
+      review_state: 'none' | 'pending' | 'approved' | 'rejected'
+      leave_review_url?: string | null
+      game?: { id: number; name: string; image_url?: string | null } | null
+
+      options?: Array<{
+        id: number
+        title: string
+        calc_mode: 'absolute' | 'percent'
+        scope: 'unit' | 'total'
+        value_cents?: number | null
+        value_percent?: number | null
+        is_ga?: boolean
+      }>
+      ranges?: Array<{ title: string; label: string }>
+      has_qty_slider?: boolean
     }>
   }
 }>()
@@ -86,8 +106,7 @@ async function saveNick() {
       <div class="grid lg:grid-cols-3 gap-6">
         <!-- items -->
         <div class="lg:col-span-2 space-y-3">
-          <div v-for="it in order.items" :key="it.product_name"
-            class="border border-border rounded-lg p-4 flex justify-between">
+          <div v-for="it in order.items" :key="it.id" class="border border-border rounded-lg p-4 flex justify-between">
             <div class="flex items-center gap-4">
               <img v-if="it.image_url" class="w-16 h-16 object-cover rounded" :src="it.image_url"
                 :alt="it.product_name">
@@ -110,6 +129,7 @@ async function saveNick() {
                       </span>
                     </li>
                   </ul>
+
                 </div>
 
                 <div v-if="it.ranges?.length" class="text-sm text-muted-foreground">
@@ -119,9 +139,28 @@ async function saveNick() {
                 <template v-if="it.has_qty_slider">
                   Qty: {{ it.qty }} · {{ formatPrice(it.unit_price_cents) }}/each
                 </template>
+
+                <div class="mt-2">
+                  <a v-if="order.status === 'completed' && it.review_state === 'none' && it.leave_review_url"
+                    :href="it.leave_review_url" class="text-sm underline text-primary hover:opacity-80">
+                    Leave review
+                  </a>
+
+                  <span v-else-if="it.review_state === 'pending'" class="text-sm text-muted-foreground">
+                    Review submitted (pending)
+                  </span>
+                  <span v-else-if="it.review_state === 'approved'" class="text-sm text-green-700">
+                    Review published
+                  </span>
+                  <span v-else-if="it.review_state === 'rejected'" class="text-sm text-muted-foreground">
+                    Review submitted
+                  </span>
+                </div>
               </div>
             </div>
+
             <div class="font-semibold">{{ formatPrice(it.line_total_cents) }}</div>
+
           </div>
         </div>
 

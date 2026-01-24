@@ -18,7 +18,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $orders = Order::where('user_id', $request->user()->id)
-            ->orderByDesc(DB::raw('COALESCE(paid_at, placed_at, created_at)')) // 👈 тут
+            ->orderByDesc(DB::raw('COALESCE(paid_at, placed_at, created_at)'))
             ->withCount('items')
             ->paginate(20);
 
@@ -26,10 +26,9 @@ class OrderController extends Controller
             'orders' => $orders->through(fn($o) => [
                 'id'          => $o->id,
                 'status'      => $o->status,
-                'placed_at'   => optional($o->paid_at ?? $o->placed_at ?? $o->created_at)->toDateTimeString(), // 👈 тут
+                'placed_at'   => optional($o->paid_at ?? $o->placed_at ?? $o->created_at)->toDateTimeString(),
                 'total_cents' => $o->total_cents,
                 'items_count' => $o->items_count,
-                'game_payload'   => $o->game_payload,
                 'nickname'       => $o->game_payload['nickname'] ?? null,
                 'needs_nickname' => empty($o->game_payload['nickname'] ?? null),
             ]),
@@ -58,8 +57,8 @@ class OrderController extends Controller
         $order->save();
 
         DB::afterCommit(function () use ($order) {
-        event(new \App\Events\OrderWorkflowUpdated($order->id));
-    });
+            event(new \App\Events\OrderWorkflowUpdated($order->id));
+        });
 
         return response()->json(['ok' => true, 'nickname' => $data['nickname']]);
     }
@@ -68,8 +67,10 @@ class OrderController extends Controller
     {
         $this->authorize('view', $order);
 
-        // Загружаем вместе с options и group (чтобы был доступ к title)
         $order->load(
+            'items.review',
+            'items.product.category.game',
+            'items.product.categories.game',
             'items.product.optionGroups',
             'items.options.optionValue.group',
             'items.options.group'
@@ -79,7 +80,7 @@ class OrderController extends Controller
             'order' => [
                 'id' => $order->id,
                 'status' => $order->status,
-                'placed_at'     => optional($order->paid_at ?? $order->placed_at ?? $order->created_at)->toDateTimeString(), // 👈 тут
+                'placed_at' => optional($order->paid_at ?? $order->placed_at ?? $order->created_at)->toDateTimeString(),
                 'total_cents' => $order->total_cents,
                 'currency' => $order->currency,
                 'shipping_address' => $order->shipping_address,
@@ -88,20 +89,40 @@ class OrderController extends Controller
                 'nickname'       => $order->game_payload['nickname'] ?? null,
                 'needs_nickname' => empty($order->game_payload['nickname'] ?? null),
 
+                'items' => $order->items->map(function ($i) use ($order) {
+                    // ===== review meta =====
+                    $review = $i->review; // может быть null
+                    $reviewState = $review?->status ?? 'none'; // none|pending|approved|rejected
 
-                'items' => $order->items->map(function ($i) {
-                    // value-опции (radio/checkbox): как в корзине/чекауте
+                    $leaveUrl = null;
+                    if ($order->status === \App\Models\Order::STATUS_COMPLETED && $reviewState === 'none') {
+                        $leaveUrl = route('reviews.create', ['order' => $order->id, 'item' => $i->id]);
+                    }
+
+                    // ===== game snapshot (через primary category) =====
+                    $game = null;
+                    if ($i->product) {
+                        $cat = $i->product->category_id
+                            ? $i->product->category
+                            : $i->product->categories->firstWhere('pivot.is_primary', true);
+
+                        $game = $cat?->game;
+                    }
+
+                    // ===== value options (radio/checkbox/selectors) =====
                     $valueOptions = $i->options
                         ->filter(fn($o) => $o->option_value_id && $o->optionValue && $o->optionValue->group)
                         ->sortBy(function ($o) {
                             $v = $o->optionValue;
                             $g = $v->group;
+
                             $priority = match ($g->code ?? null) {
                                 'class' => 0,
                                 'slot'  => 1,
                                 'affix' => 2,
                                 default => 100,
                             };
+
                             return $priority * 1_000_000
                                 + (int)($g->position ?? 0) * 1_000
                                 + (int)($v->position ?? 0);
@@ -139,12 +160,12 @@ class OrderController extends Controller
                                 'scope'         => ($g->multiply_by_qty ?? false) ? 'unit' : 'total',
                                 'value_cents'   => $valueCents,
                                 'value_percent' => $valuePercent,
-                                'is_ga'         => (bool) $o->is_ga,   // ⬅️ добавили
+                                'is_ga'         => (bool) $o->is_ga,
                             ];
                         })
                         ->values();
 
-                    // range-опции (double_range_slider)
+                    // ===== range options (double_range_slider) =====
                     $rangeOptions = $i->options
                         ->filter(fn($o) => !is_null($o->option_group_id))
                         ->map(fn($o) => [
@@ -157,12 +178,26 @@ class OrderController extends Controller
                         ->contains('type', \App\Models\OptionGroup::TYPE_SLIDER);
 
                     return [
+                        'id' => $i->id,               // ✅ order_item id
+                        'product_id' => $i->product_id,
+
                         'product_name' => $i->product_name,
                         'image_url' => $i->product?->image_url,
+
+                        // ✅ review UI
+                        'review_state' => $reviewState,
+                        'leave_review_url' => $leaveUrl,
+
+                        // ✅ для карточки отзыва/отображения рядом
+                        'game' => $game ? [
+                            'id' => $game->id,
+                            'name' => $game->name,
+                            'image_url' => $game->image_url,
+                        ] : null,
+
                         'qty' => $i->qty,
                         'unit_price_cents' => $i->unit_price_cents,
                         'line_total_cents' => $i->line_total_cents,
-
 
                         'options' => $valueOptions,
                         'ranges' => $rangeOptions,

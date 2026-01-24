@@ -254,7 +254,7 @@ class CheckoutController extends Controller
         // чистим корзину сразу (как и при обычном checkout)
         \App\Services\Cart\CartTools::clearUserCart($user->id);
 
-        
+
         $request->session()->forget('checkout.promo');
 
         DB::afterCommit(function () use ($order) {
@@ -451,17 +451,17 @@ class CheckoutController extends Controller
 
         // Создание Checkout Session
         $session = $stripe->checkout->sessions->create([
-             'mode'                   => 'payment',
-             'payment_method_types'   => ['card'],
-             'line_items'             => $lineItems, // как у тебя
-             'discounts'              => $discounts, // ← Stripe сам применит скидку
-             'success_url'            => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
-             'cancel_url'             => route('checkout.cancel'),
-             'metadata'               => [
-                 'user_id'  => (string) $user->id,
-                 'order_id' => (string) $order->id,
-             ],
-         ]);
+            'mode'                   => 'payment',
+            'payment_method_types'   => ['card'],
+            'line_items'             => $lineItems, // как у тебя
+            'discounts'              => $discounts, // ← Stripe сам применит скидку
+            'success_url'            => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url'             => route('checkout.cancel'),
+            'metadata'               => [
+                'user_id'  => (string) $user->id,
+                'order_id' => (string) $order->id,
+            ],
+        ]);
 
 
         // 4) Сохраняем связь заказа с сессией Stripe
@@ -485,7 +485,7 @@ class CheckoutController extends Controller
         $request->session()->forget('checkout.promo');
         $stripe = new \Stripe\StripeClient(config('services.stripe.secret'));
 
-        
+
 
         // Попробуем найти заказ по session_id
         $order = Order::where('checkout_session_id', $sessionId)->first();
@@ -578,6 +578,122 @@ class CheckoutController extends Controller
             'ok' => true,
             'promo' => null,
             'totals' => $totals,
+        ]);
+    }
+
+    public function devSuccess(Request $request)
+    {
+        $user = $request->user();
+
+        $cart = \App\Models\Cart::firstOrCreate(['user_id' => $user->id])
+            ->load(['items.product', 'items.options.group', 'items.options.optionValue.group']);
+
+        abort_if($cart->items->isEmpty(), 422, 'Cart is empty');
+
+        $promo = null;
+        if ($pid = $request->session()->get('checkout.promo.id')) {
+            $promo = \App\Models\PromoCode::find($pid);
+        }
+
+        $totals = $this->calcTotalsWithPromo($cart, $promo, $user->id);
+
+        $order = DB::transaction(function () use ($request, $user, $cart, $totals, $promo) {
+            $order = \App\Models\Order::create([
+                'user_id'        => $user->id,
+                'status'         => \App\Models\Order::STATUS_PAID,  // ✅ сразу paid
+                'currency'       => $totals['currency'],
+                'subtotal_cents' => $totals['subtotal_cents'],
+                'shipping_cents' => $totals['shipping_cents'],
+                'tax_cents'      => $totals['tax_cents'],
+                'promo_code_id'  => $promo?->id,
+                'promo_discount_cents' => $totals['discount_cents'],
+                'total_cents'    => $totals['total_cents'],
+                'payment_method' => 'dev',
+                'payment_id'     => 'dev_' . (string) \Illuminate\Support\Str::uuid(),
+                'placed_at'      => now(), // ✅ как будто оплата прошла
+                'game_payload'   => [
+                    'nickname' => $request->session()->get('checkout.nickname'),
+                ],
+                'checkout_session_id' => null,
+            ]);
+
+            foreach ($cart->items as $ci) {
+                $oi = $order->items()->create([
+                    'product_id'        => $ci->product_id,
+                    'product_name'      => $ci->product->name,
+                    'unit_price_cents'  => $ci->unit_price_cents,
+                    'qty'               => $ci->qty,
+                    'line_total_cents'  => $ci->line_total_cents,
+
+                    // если у тебя у айтемов есть статус paid — поставь его тут.
+                    // иначе оставь pending (часто дальше workflow сам разруливает)
+                    'status'            => \App\Models\OrderItem::STATUS_PAID,
+                ]);
+
+                foreach ($ci->options as $opt) {
+                    // value-опция
+                    if (!is_null($opt->option_value_id)) {
+                        $ov = \App\Models\OptionValue::with('group')->find($opt->option_value_id);
+                        $g  = $ov?->group;
+
+                        $delta = 0;
+                        if ($g) {
+                            if (($g->type ?? null) === \App\Models\OptionGroup::TYPE_SELECTOR || ($g->type ?? null) === 'selector') {
+                                if (($g->pricing_mode ?? 'absolute') === 'percent') {
+                                    // проценты — при желании сохраняй в payload_json
+                                } else {
+                                    $delta = (int)($ov->delta_cents ?? $ov->price_delta_cents ?? 0);
+                                }
+                            } elseif (in_array($g->type ?? null, [
+                                \App\Models\OptionGroup::TYPE_RADIO_PERCENT,
+                                \App\Models\OptionGroup::TYPE_CHECKBOX_PERCENT,
+                            ], true)) {
+                                // проценты — при желании в payload_json
+                            } else {
+                                $delta = (int)($ov->price_delta_cents ?? 0);
+                            }
+                        }
+
+                        $oi->options()->create([
+                            'option_value_id'   => $opt->option_value_id,
+                            'title'             => $ov?->title ?? 'Option',
+                            'price_delta_cents' => $delta,
+                            'is_ga'             => (bool) $opt->is_ga,
+                        ]);
+                        continue;
+                    }
+
+                    // range-опция
+                    if (!is_null($opt->option_group_id)) {
+                        $oi->options()->create([
+                            'option_value_id'   => null,
+                            'option_group_id'   => $opt->option_group_id,
+                            'title'             => $opt->group?->title ?? 'Range',
+                            'price_delta_cents' => (int)($opt->price_delta_cents ?? 0),
+                            'selected_min'      => (int)($opt->selected_min ?? 0),
+                            'selected_max'      => (int)($opt->selected_max ?? 0),
+                            'payload_json'      => $opt->payload_json ?? null,
+                        ]);
+                        continue;
+                    }
+                }
+            }
+
+            return $order;
+        });
+
+        // чистим корзину, как при обычном чекауте
+        \App\Services\Cart\CartTools::clearUserCart($user->id);
+        $request->session()->forget('checkout.promo');
+
+        DB::afterCommit(function () use ($order) {
+            event(new \App\Events\OrderWorkflowUpdated($order->id));
+        });
+
+        return response()->json([
+            'ok'       => true,
+            'order_id' => $order->id,
+            'redirect' => route('orders.show', $order),
         ]);
     }
 }

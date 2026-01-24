@@ -95,7 +95,7 @@ onMounted(() => loadSummary())
                         <div class="flex flex-col items-center gap-2">
                             <Link :href="route('games.index')">Games</Link>
                             <Link :href="route('posts.index')">Blog</Link>
-                            <Link :href="route('home')">Reviews</Link>
+                            <Link :href="route('reviews.public')">Reviews</Link>
                             <Link :href="route('home')">Contact Us</Link>
                         </div>
                         <Separator class="my-4" />
@@ -123,7 +123,7 @@ onMounted(() => loadSummary())
                         <Link class="hover:underline " :href="route('posts.index')">Blog</Link>
                     </li>
                     <li>
-                        <Link class="hover:underline " :href="route('login')">Reviews</Link>
+                        <Link class="hover:underline " :href="route('reviews.public')">Reviews</Link>
                     </li>
                     <li>
                         <Link class="hover:underline " :href="route('contact.show')">Contact Us</Link>
