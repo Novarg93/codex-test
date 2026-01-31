@@ -2,8 +2,10 @@
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
 import { Head } from '@inertiajs/vue3'
 import PostsBreadcrumbs from '@/Components/PostsBreadcrumbs.vue'
+import SeoHead from '@/Components/SeoHead.vue'
 
 const props = defineProps<{
+  seo: any
   post: {
     id: number
     title: string
@@ -24,7 +26,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Head :title="props.post.seo.title || props.post.title" />
+  <SeoHead :seo="props.seo" />
 
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-8 md:py-12 lg:py-16">

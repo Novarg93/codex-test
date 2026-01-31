@@ -22,6 +22,16 @@ class OrderController extends Controller
             ->withCount('items')
             ->paginate(20);
 
+        $seo = \App\Support\Seo::fromFallback([
+            'title' => 'My Orders',
+            'description' => 'Order history',
+            'canonical' => url(route('orders.index', [], false)),
+            'robots' => 'noindex,nofollow',
+            'og_title' => 'My Orders',
+            'og_description' => 'Order history',
+            'og_type' => 'website',
+        ]);
+
         return Inertia::render('Profile/Orders/Index', [
             'orders' => $orders->through(fn($o) => [
                 'id'          => $o->id,
@@ -32,6 +42,7 @@ class OrderController extends Controller
                 'nickname'       => $o->game_payload['nickname'] ?? null,
                 'needs_nickname' => empty($o->game_payload['nickname'] ?? null),
             ]),
+            'seo' => $seo,
         ]);
     }
 
@@ -76,7 +87,19 @@ class OrderController extends Controller
             'items.options.group'
         );
 
+
+        $seo = \App\Support\Seo::fromFallback([
+            'title' => 'Order #' . $order->id,
+            'description' => 'Order details',
+            'canonical' => url(route('orders.show', ['order' => $order->id], false)),
+            'robots' => 'noindex,nofollow',
+            'og_title' => 'Order #' . $order->id,
+            'og_description' => 'Order details',
+            'og_type' => 'website',
+        ]);
+
         return Inertia::render('Profile/Orders/Show', [
+            'seo' => $seo,
             'order' => [
                 'id' => $order->id,
                 'status' => $order->status,

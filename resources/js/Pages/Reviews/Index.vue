@@ -6,8 +6,7 @@ import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import Pagination from "@/Components/Pagination.vue";
 import { Star } from "lucide-vue-next";
-
-// ✅ shadcn select
+import SeoHead from '@/Components/SeoHead.vue'
 import {
     Select,
     SelectTrigger,
@@ -32,6 +31,7 @@ const props = defineProps<{
         most_reviewed: null | { product_id: number; name: string | null; image_url: string | null; count: number };
         highest_rated: null | { product_id: number; name: string | null; image_url: string | null; avg: number; count: number; min_reviews: number };
     };
+    seo: any
 }>();
 
 const ratingLocal = ref<string>(props.filters.rating?.toString() ?? "");
@@ -156,6 +156,7 @@ function relativeTime(value?: string | null) {
 </script>
 
 <template>
+    <SeoHead :seo="props.seo" />
     <DefaultLayout>
         <section class="w-[90%] 2xl:w-[75%] mx-auto py-8">
             <div class="flex items-end justify-between gap-4 mb-6">
@@ -346,12 +347,10 @@ function relativeTime(value?: string | null) {
                         </div>
 
                         <!-- ✅ relative label on the right -->
-                        <div
-  v-if="r.published_at"
-  class="text-xs whitespace-nowrap rounded-full border border-border bg-muted px-2 py-1 text-muted-foreground"
->
-  {{ relativeTime(r.published_at) }}
-</div>
+                        <div v-if="r.published_at"
+                            class="text-xs whitespace-nowrap rounded-full border border-border bg-muted px-2 py-1 text-muted-foreground">
+                            {{ relativeTime(r.published_at) }}
+                        </div>
                     </div>
 
                     <div class="mt-3 whitespace-pre-line">{{ r.body }}</div>

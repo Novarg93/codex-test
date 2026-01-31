@@ -9,6 +9,8 @@ import { Input } from '@/Components/ui/input'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Components/ui/select'
 import { Popover, PopoverTrigger, PopoverContent } from '@/Components/ui/popover'
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/Components/ui/command'
+import SeoHead from '@/Components/SeoHead.vue'
+
 
 type Row = {
     id: number
@@ -49,7 +51,8 @@ function summarizeOrders(items: Row[]) {
 }
 
 
-const props = defineProps<{ items: Row[] }>()
+
+const props = defineProps<{ items: Row[]; seo: any }>()
 
 /* ========= state ========= */
 const rows = ref<Row[]>([...props.items])
@@ -367,6 +370,7 @@ onBeforeUnmount(() => { try { (window as any).Echo?.leave('orders') } catch { } 
 
 
 <template>
+    <SeoHead :seo="props.seo" />
     <DefaultLayout>
         <div class="px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">

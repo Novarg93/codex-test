@@ -12,6 +12,7 @@ import {
     BreadcrumbSeparator,
 } from '@/Components/ui/breadcrumb'
 import { Link } from '@inertiajs/vue3'
+import SeoHead from '@/Components/SeoHead.vue'
 
 const { summary, loadSummary, setSummary } = useCartSummary()
 
@@ -41,6 +42,7 @@ type ItemOption = {
 }
 
 const props = defineProps<{
+    seo:any
     items: CartItem[]
     total_qty: number
     total_sum_cents: number
@@ -98,6 +100,7 @@ async function removeItem(item: CartItem) {
 </script>
 
 <template>
+    <SeoHead :seo="props.seo" />
     <DefaultLayout>
         <section class="w-[90%] 2xl:w-[75%] mx-auto py-8 md:py-12 lg:py-16">
             <Breadcrumb>

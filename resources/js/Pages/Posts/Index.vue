@@ -2,6 +2,8 @@
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import PostsBreadcrumbs from '@/Components/PostsBreadcrumbs.vue'
+import SeoHead from '@/Components/SeoHead.vue'
+
 
 type PostItem = {
   id: number
@@ -10,12 +12,11 @@ type PostItem = {
   image_url?: string | null
   published_at?: string | null
   excerpt?: string | null
-  seo?: {
-    title?: string | null
-  }
+  seo: any
 }
 
 const props = defineProps<{
+  seo: any
   posts: {
     data: PostItem[]
     links: { url: string | null; label: string; active: boolean }[]
@@ -25,6 +26,7 @@ const props = defineProps<{
 </script>
 
 <template>
+  <SeoHead :seo="props.seo" />
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-8 md:py-12 lg:py-16">
       <!-- breadcrumbs -->

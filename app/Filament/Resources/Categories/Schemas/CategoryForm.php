@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Support\Str;
+use App\Filament\Forms\Components\SeoSection;
 
 class CategoryForm
 {
@@ -46,6 +47,9 @@ class CategoryForm
                     ->visibility('public')
                     ->image()
                     ->nullable(),
+
+                SeoSection::make(),
+
             ]);
     }
 }

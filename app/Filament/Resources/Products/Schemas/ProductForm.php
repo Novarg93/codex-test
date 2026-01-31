@@ -20,6 +20,7 @@ use Filament\Forms\Components\Hidden;
 use App\Models\OptionGroup;
 use Filament\Schemas\Components\Grid as UiGrid;
 use Filament\Forms\Components\Repeater as FRepeater;
+use App\Filament\Forms\Components\SeoSection;
 
 use App\Models\Category;
 
@@ -134,6 +135,8 @@ class ProductForm
 
                 Textarea::make('short')->rows(2)->columnSpanFull(),
                 Textarea::make('description')->rows(6)->columnSpanFull(),
+
+                SeoSection::make(),
 
                 UiSection::make('Options')
                     ->columnSpan(['lg' => 2])

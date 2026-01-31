@@ -4,13 +4,14 @@ import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import OrderStatusBadge from '@/Components/OrderStatusBadge.vue'
 import Pagination from '@/Components/Pagination.vue'
+import SeoHead from '@/Components/SeoHead.vue'
 
 
 type OrderDto = { id:number; status:string; placed_at:string|null; total_cents:number; items_count:number }
 type Paged<T> = { data: T[]; links: { url:string|null; label:string; active:boolean }[]; meta?: any }
 
 
-const props = defineProps<{ orders: { data: OrderDto[]; links?: any; meta?: any } }>()
+const props = defineProps<{ seo:any; orders: { data: OrderDto[]; links?: any; meta?: any } }>()
 const list = computed(() => props.orders?.data ?? [])
 function formatPrice(cents:number) {
   return new Intl.NumberFormat('en-US', { style:'currency', currency:'USD' }).format(cents/100)
@@ -18,6 +19,7 @@ function formatPrice(cents:number) {
 </script>
 
 <template>
+  <SeoHead :seo="seo" />
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-8">
       <h1 class="text-3xl font-semibold mb-6">Your orders</h1>

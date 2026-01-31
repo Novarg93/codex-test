@@ -17,10 +17,23 @@ class Category extends Model
         'type',
         'description',
         'image',
+        'seo_title',
+        'seo_description',
+        'seo_og_title',
+        'seo_og_description',
+        'seo_og_image',
+        'seo_noindex',
+        'canonical_url',
+        'seo_text',
     ];
 
     // 👇 добавляем вычисляемое поле
     protected $appends = ['image_url'];
+
+    protected $casts = [
+        
+        'seo_noindex' => 'bool',
+    ];
 
     public function game(): BelongsTo
     {
@@ -38,12 +51,12 @@ class Category extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::get(
-            fn ($value, $attributes) =>
-                !empty($attributes['image'])
-                    ? (str_starts_with($attributes['image'], 'http') || str_starts_with($attributes['image'], '/')
-                        ? $attributes['image']
-                        : Storage::url($attributes['image']))
-                    : null
+            fn($value, $attributes) =>
+            !empty($attributes['image'])
+                ? (str_starts_with($attributes['image'], 'http') || str_starts_with($attributes['image'], '/')
+                    ? $attributes['image']
+                    : Storage::url($attributes['image']))
+                : null
         );
     }
 

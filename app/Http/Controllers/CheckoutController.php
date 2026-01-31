@@ -30,6 +30,17 @@ class CheckoutController extends Controller
         }
 
         $totals = $this->calcTotalsWithPromo($cart, $promo, $request->user()->id);
+
+        $seo = \App\Support\Seo::fromFallback([
+            'title' => 'Checkout',
+            'description' => 'Secure checkout',
+            'canonical' => url(route('checkout.index', [], false)),
+            'robots' => 'noindex,follow',
+            'og_title' => 'Checkout',
+            'og_description' => 'Secure checkout',
+            'og_type' => 'website',
+        ]);
+
         return Inertia::render('Checkout/Index', [
             'stripePk' => config('services.stripe.key'),
             'totals' => $totals,
@@ -69,7 +80,7 @@ class CheckoutController extends Controller
                         $mode = 'absolute';
                         $valueCents = null;
                         $valuePercent = null;
-
+                        $isUnit = ($g->multiply_by_qty === null) ? true : (bool) $g->multiply_by_qty;
                         if (($g->type ?? null) === \App\Models\OptionGroup::TYPE_SELECTOR || ($g->type ?? null) === 'selector') {
                             $mode = ($g->pricing_mode === 'percent') ? 'percent' : 'absolute';
                             if ($mode === 'percent') {
@@ -93,7 +104,7 @@ class CheckoutController extends Controller
                             'id'            => $v->id,
                             'title'         => $v->title,
                             'calc_mode'     => $mode,
-                            'scope'         => ($g->multiply_by_qty ?? false) ? 'unit' : 'total',
+                            'scope' => $isUnit ? 'unit' : 'total',
                             'value_cents'   => $valueCents,
                             'value_percent' => $valuePercent,
                             'is_ga'         => (bool) $o->is_ga,
@@ -122,6 +133,7 @@ class CheckoutController extends Controller
             })->values(),
 
             'nickname' => $request->session()->get('checkout.nickname'),
+            'seo' => $seo,
         ]);
     }
 

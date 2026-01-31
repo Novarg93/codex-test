@@ -153,6 +153,11 @@ class PublicReviewController extends Controller
                     'min_reviews' => $minReviews,
                 ] : null,
             ],
+            'seo' => seoPage('reviews', [
+                'canonical' => url(route('reviews.public', [], false)),
+                'title' => 'Reviews',
+                'description' => 'Customer reviews and ratings for our services.',
+            ]),
         ]);
     }
 }

@@ -11,7 +11,7 @@ use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
+use App\Support\Seo;
 
 
 class WorkflowController extends Controller
@@ -20,6 +20,12 @@ class WorkflowController extends Controller
     {
         // отрисовываем Inertia-страницу + первый набор данных
         return Inertia::render('Workflow/Index', [
+            'seo' => Seo::fromFallback([
+            'title' => 'Workflow',
+            'description' => 'Internal workflow',
+            'canonical' => url(route('workflow.index', [], false)),
+            'robots' => 'noindex,nofollow',
+        ]),
             'items' => $this->fetchItems(),
         ]);
     }

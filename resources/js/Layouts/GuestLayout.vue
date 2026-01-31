@@ -1,9 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue'
+
+
+
+const seo = {
+  
+  robots: 'noindex,nofollow',
+}
+
+
 </script>
 
 <template>
+    <SeoHead :seo="seo" />
     <div
         class="flex min-h-screen flex-col items-center pt-6 sm:justify-center sm:pt-0"
     >

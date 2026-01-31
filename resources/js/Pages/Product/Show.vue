@@ -11,6 +11,8 @@ import type { ProductWithGroups, SelectorGroup } from '@/types/product-options'
 import { ref, computed, onMounted } from 'vue'
 import RareItemBuilder from '@/Components/product/RareItemBuilder.vue'
 import UniqueD4Builder from '@/Components/product/UniqueD4Builder.vue'
+import { Star } from "lucide-vue-next";
+import SeoHead from '@/Components/SeoHead.vue'
 
 const props = defineProps<{
   game: Game
@@ -25,7 +27,9 @@ const props = defineProps<{
     is_anonymous: boolean
     published_at: string | null
     game: { id: number | null; name: string | null; image_url?: string | null }
+
   }>
+  seo: any
 }>()
 
 const { selectionByGroup, qtyGroup, buildAddToCartPayload } = useProductOptions(props.product)
@@ -404,9 +408,44 @@ function formatDateShort(value?: string | null) {
     year: "numeric",
   }).format(d)
 }
+
+function relativeTime(value?: string | null) {
+  if (!value) return ""
+
+  const isoLike = value.replace(" ", "T")
+  const d = new Date(isoLike)
+  if (Number.isNaN(d.getTime())) return ""
+
+  const now = new Date()
+  let diffMs = now.getTime() - d.getTime()
+  if (diffMs < 0) diffMs = 0
+
+  const dayMs = 24 * 60 * 60 * 1000
+  const days = Math.floor(diffMs / dayMs)
+
+  if (days <= 0) return "Today"
+  if (days === 1) return "1 day ago"
+  if (days < 7) return `${days} days ago`
+
+  const weeks = Math.floor(days / 7)
+  if (weeks === 1) return "1 week ago"
+  if (weeks < 5) return `${weeks} weeks ago`
+
+  const months = Math.floor(days / 30)
+  if (months <= 11) return months === 1 ? "1 month ago" : `${months} months ago`
+
+  const years = Math.floor(days / 365)
+  return years <= 1 ? "1+ years ago" : `${years}+ years ago`
+}
+
+function stars(n: number) {
+  const v = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+  return Array.from({ length: 5 }, (_, i) => i < v);
+}
 </script>
 
 <template>
+  <SeoHead :seo="props.seo" />
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-8 md:py-12 lg:py-16">
       <Breadcrumbs :game="game" :category="category" :product="product" />
@@ -494,11 +533,19 @@ function formatDateShort(value?: string | null) {
                         {{ r.is_anonymous ? 'Anonymous' : (r.display_name ?? 'Verified customer') }}
                       </div>
 
-                      <div class="text-xs text-muted-foreground mt-0.5">
-                        <span class="font-medium text-foreground">{{ r.rating }}</span>/5
-                        <span v-if="r.published_at"> · {{ formatDateShort(r.published_at) }}</span>
+                      <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div class="flex items-center gap-0.5">
+                          <Star v-for="(on, i) in stars(r.rating)" :key="i" class="h-4 w-4"
+                            :class="on ? 'text-primary fill-primary' : 'text-muted-foreground/40'" />
+                        </div>
+
+                        <span v-if="r.published_at">· {{ formatDateShort(r.published_at) }}</span>
                       </div>
                     </div>
+                  </div>
+                  <div v-if="r.published_at"
+                    class="text-xs whitespace-nowrap rounded-full border border-border bg-muted px-2 py-1 text-muted-foreground">
+                    {{ relativeTime(r.published_at) }}
                   </div>
                 </div>
 

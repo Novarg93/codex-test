@@ -13,33 +13,42 @@ use Illuminate\Filesystem\FilesystemAdapter;
 class Product extends Model
 {
     protected $fillable = [
-    'category_id',
-    'name',
-    'slug',
-    'sku',
-    'price_cents',
-    'price_preview',  
-    'is_active',
-    'track_inventory',
-    'stock',
-    'image',
-    'short',
-    'description',
-    'meta',
-];
+        'category_id',
+        'name',
+        'slug',
+        'sku',
+        'price_cents',
+        'price_preview',
+        'is_active',
+        'track_inventory',
+        'stock',
+        'image',
+        'short',
+        'description',
+        'meta',
+        'seo_title',
+        'seo_description',
+        'seo_og_title',
+        'seo_og_description',
+        'seo_og_image',
+        'seo_noindex',
+        'canonical_url',
+        'seo_text',
+    ];
 
     protected $casts = [
         'is_active' => 'bool',
         'track_inventory' => 'bool',
         'meta' => 'array',
+        'seo_noindex' => 'bool',
     ];
 
     protected $appends = ['image_url'];
 
     public function getImageUrlAttribute(): ?string
-{
-    return $this->image ? Storage::url($this->image) : null;
-}
+    {
+        return $this->image ? Storage::url($this->image) : null;
+    }
 
     // старая «главная категория»
     public function category(): BelongsTo

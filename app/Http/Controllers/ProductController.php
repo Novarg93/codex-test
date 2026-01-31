@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\OptionGroup;
 use Inertia\Inertia;
+use App\Support\Seo;
 
 class ProductController extends Controller
 {
@@ -31,18 +32,27 @@ class ProductController extends Controller
             ->limit(5)
             ->get();
 
+        $canonical = url(route('products.show', [$game->slug, $category->slug, $product->slug], false));
+
+        $seo = Seo::from($product, [
+            'canonical' => $canonical,
+            'title' => "{$product->name} — {$game->name}",
+            'description' => $product->short ?? null,
+            'og_image' => $product->image_url ?? $category->image_url ?? $game->image_url,
+        ]);
+
         return Inertia::render('Product/Show', [
             'game' => $game,
-            'category' => $category,
+            'category' => $category,            
             'reviews' => $latestReviews->map(fn($r) => [
                 'id' => $r->id,
                 'rating' => (int) $r->rating,
                 'body' => $r->body,
 
-                
+
                 'is_anonymous' => (bool) $r->is_anonymous,
 
-                
+
                 'display_name' => $r->is_anonymous ? null : $r->display_name,
                 'avatar_url'   => $r->is_anonymous ? null : $r->avatar_url,
 
@@ -241,6 +251,7 @@ class ProductController extends Controller
                     ]);
                 })->values(),
             ],
+            'seo' => $seo,
         ]);
     }
 }

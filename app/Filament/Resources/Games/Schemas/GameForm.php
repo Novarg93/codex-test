@@ -6,7 +6,7 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
-
+use App\Filament\Forms\Components\SeoSection;
 
 class GameForm
 {
@@ -43,6 +43,9 @@ class GameForm
                     ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/webp'])
                     ->maxSize(4096)
                     ->nullable(),
+                    
+                SeoSection::make(),
+
             ]);
     }
 }

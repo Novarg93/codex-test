@@ -6,8 +6,10 @@ import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { Button } from '@/Components/ui/button'
 import { Input } from "@/Components/ui/input"
+import SeoHead from '@/Components/SeoHead.vue'
 
 const props = defineProps<{
+  seo:any;
   order: {
     id: number
     status: 'pending' | 'paid' | 'in_progress' | 'completed' | 'refund' | string
@@ -96,6 +98,7 @@ async function saveNick() {
 </script>
 
 <template>
+  <SeoHead :seo="seo" />
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-8">
       <div class="flex items-center gap-3 mb-6">

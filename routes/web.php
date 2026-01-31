@@ -28,13 +28,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::get('/', fn() => Inertia::render('Welcome', [
-    'canLogin' => Route::has('login'),
-    'canRegister' => Route::has('register'),
-    'laravelVersion' => Application::VERSION,
-    'phpVersion' => PHP_VERSION,
-]))->name('home');
-
+Route::get('/', [\App\Http\Controllers\HomeController::class, '__invoke'])->name('home');
 
 Route::middleware(['auth', 'verified', 'can:workflow'])
     ->get('/workflow', [WorkflowController::class, 'index'])
@@ -67,10 +61,24 @@ Route::get('/auth/google/callback', [GoogleOAuthController::class, 'callback'])
 Route::middleware('auth')->delete('/auth/google/unlink', [GoogleOAuthController::class, 'unlink'])
     ->name('social.google.unlink');
 
-Route::get('/', FaqController::class)->name('home');
+
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->name('dashboard');
+    Route::get('/dashboard', function () {
+        $seo = \App\Support\Seo::fromFallback([
+            'title' => 'Dashboard',
+            'description' => 'Account dashboard',
+            'canonical' => url(route('dashboard', [], false)),
+            'robots' => 'noindex,nofollow',
+            'og_title' => 'Dashboard',
+            'og_description' => 'Account dashboard',
+            'og_type' => 'website',
+        ]);
+
+        return Inertia::render('Dashboard', [
+            'seo' => $seo,
+        ]);
+    })->name('dashboard');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -140,9 +148,9 @@ Route::prefix('cart')->group(function () {
 });
 
 Route::get('/legal/{page:code}', [PageController::class, 'show'])->name('legal.show');
-Route::get('/catalog', fn() => Inertia::render('Catalog'))->name('catalog');
 
-Route::get('/contact', fn() => Inertia::render('Contact/Show'))->name('contact.show');
+
+Route::get('/contact', \App\Http\Controllers\ContactPageController::class)->name('contact.show');
 Route::post('/contact/send', [ContactController::class, 'send'])
     ->middleware('throttle:5,1')
     ->name('contact.send');

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\OptionGroup;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Support\Seo;
 
 class CatalogController extends Controller
 {
@@ -30,7 +31,7 @@ class CatalogController extends Controller
         $totalProducts = Product::query()
             ->where(function ($q) use ($categoryIds) {
                 $q->whereHas('categories', fn($qq) => $qq->whereIn('categories.id', $categoryIds))
-                  ->orWhereIn('category_id', $categoryIds);
+                    ->orWhereIn('category_id', $categoryIds);
             })
             ->distinct()
             ->count('products.id');
@@ -43,20 +44,25 @@ class CatalogController extends Controller
                 'optionGroups:id,product_id,type,qty_min,qty_max,qty_step,slider_min,slider_max,slider_step,pricing_mode,unit_price_cents,base_fee_cents',
             ])
             ->select([
-                'id', 'name', 'slug',
-                'price_cents', 'price_preview', // 👈 добавили
-                'image', 'short', 'category_id',
+                'id',
+                'name',
+                'slug',
+                'price_cents',
+                'price_preview', // 👈 добавили
+                'image',
+                'short',
+                'category_id',
             ]);
 
         if ($category) {
             $query->where(function ($q) use ($category) {
                 $q->whereHas('categories', fn($qq) => $qq->where('categories.id', $category->id))
-                  ->orWhere('category_id', $category->id);
+                    ->orWhere('category_id', $category->id);
             })->distinct();
         } else {
             $query->where(function ($q) use ($categoryIds) {
                 $q->whereHas('categories', fn($qq) => $qq->whereIn('categories.id', $categoryIds))
-                  ->orWhereIn('category_id', $categoryIds);
+                    ->orWhereIn('category_id', $categoryIds);
             })->distinct();
         }
 
@@ -109,6 +115,25 @@ class CatalogController extends Controller
                 ];
             });
 
+        $canonical = $category
+            ? route('categories.show', [$game->slug, $category->slug], false)
+            : route('games.show', [$game->slug], false);
+
+        $canonical = url($canonical);
+
+        $seoModel = $category ?? $game;
+
+        $seo = Seo::from($seoModel, [
+            'canonical' => $canonical,
+            // полезные дефолты (если seo_title пустой)
+            'title' => $category
+                ? "{$category->name} — {$game->name}"
+                : "{$game->name} Services",
+            'description' => $category?->short ?? $category?->description ?? $game->short ?? $game->description,
+            // можно сюда же дефолт og_image
+            'og_image' => $category?->image_url ?? $game->image_url,
+        ]);
+
         return Inertia::render('Catalog/Game', [
             'game'          => $game->only(['id', 'name', 'slug', 'image_url', 'description']),
             'category'      => $category
@@ -125,11 +150,7 @@ class CatalogController extends Controller
             'categories'    => $categories,
             'products'      => $products,
             'totalProducts' => $totalProducts,
-            'seo'           => [
-                // Используем nullsafe, чтобы не падать при $category === null 👇
-                'short'       => $category?->short ?? null,                 // 👈
-                'description' => $category?->description ?? $game->description, // 👈
-            ],
+            'seo' => $seo,
         ]);
     }
 }

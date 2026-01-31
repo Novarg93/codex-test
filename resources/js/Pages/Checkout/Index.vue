@@ -6,6 +6,8 @@ import axios from "axios";
 import { ref } from "vue";
 import Input from "@/Components/ui/input/Input.vue";
 import Button from "@/Components/ui/button/Button.vue";
+import SeoHead from '@/Components/SeoHead.vue'
+
 
 const isLoading = ref(false);
 const nickFormRef = ref<any>(null);
@@ -35,6 +37,7 @@ type Item = {
 };
 
 const props = defineProps<{
+   seo: any
   stripePk: string;
   items: Item[];
   totals: {
@@ -199,6 +202,7 @@ async function devPaySuccess() {
 </script>
 
 <template>
+  <SeoHead :seo="props.seo" />
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-8 md:py-12 lg:py-16">
       <h1 class="text-3xl font-semibold mb-6">Checkout</h1>

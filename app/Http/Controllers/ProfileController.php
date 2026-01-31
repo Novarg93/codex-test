@@ -18,9 +18,21 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $seo = \App\Support\Seo::fromFallback([
+        'title' => 'Profile',
+        'description' => 'Account settings',
+        'canonical' => url(route('profile.edit', [], false)),
+        'robots' => 'noindex,nofollow',
+        'og_title' => 'Profile',
+        'og_description' => 'Account settings',
+        'og_type' => 'website',
+    ]);
+
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'seo' => $seo,
         ]);
     }
 

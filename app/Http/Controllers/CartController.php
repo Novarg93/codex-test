@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\{Cart, CartItem};
+use App\Support\Seo;
 
 class CartController extends Controller
 {
@@ -54,6 +55,12 @@ class CartController extends Controller
             $totalSum = collect($items)->sum('line_total_cents');
 
             return Inertia::render('Cart/Index', [
+                'seo' => Seo::fromFallback([
+                    'title' => 'Cart',
+                    'description' => 'Your cart',
+                    'canonical' => url(route('cart.index', [], false)),
+                    'robots' => 'noindex,follow',
+                ]),
                 'items' => collect($items)->map(function ($i) {
                     $p = \App\Models\Product::with('optionGroups')->find($i['product_id']);
                     $guestGaSet = collect($i['affix_ga_ids'] ?? [])->map(fn($v) => (int)$v)->unique();
@@ -150,6 +157,12 @@ class CartController extends Controller
         ]);
 
         return Inertia::render('Cart/Index', [
+            'seo' => Seo::fromFallback([
+    'title' => 'Cart',
+    'description' => 'Your cart',
+    'canonical' => url(route('cart.index', [], false)),
+    'robots' => 'noindex,follow',
+  ]),
             'items' => $cart->items->map(function ($item) {
                 $hasQtySlider = (bool) $item->product->optionGroups
                     ->contains('type', \App\Models\OptionGroup::TYPE_SLIDER);
@@ -453,7 +466,9 @@ class CartController extends Controller
             return response()->json(['ok' => true, 'summary' => $this->summaryPayload($request)]);
         }
 
-        $item = CartItem::with(['product', 'options'])->findOrFail($data['item_id']);
+        $item = CartItem::whereHas('cart', fn($q) => $q->where('user_id', $request->user()->id))
+            ->with(['product', 'options'])
+            ->findOrFail($data['item_id']);
 
         $valueIds = $item->options->pluck('option_value_id')->filter()->values()->all();
         $ranges = $item->options
@@ -492,7 +507,8 @@ class CartController extends Controller
             return response()->json(['ok' => true, 'summary' => $this->summaryPayload($request)]);
         }
 
-        $item = CartItem::findOrFail($data['item_id']);
+        $item = CartItem::whereHas('cart', fn($q) => $q->where('user_id', $request->user()->id))
+            ->findOrFail($data['item_id']);
 
         $item->delete();
 

@@ -4,6 +4,7 @@ import { Head, usePage, router } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import { User as UserIcon, Link as LinkIcon, Unlink as UnlinkIcon } from 'lucide-vue-next'
 import TelegramLogin from '@/Components/TelegramLogin.vue'
+import SeoHead from '@/Components/SeoHead.vue'
 
 // Если используешь Ziggy:
 declare const route: any
@@ -28,7 +29,10 @@ type User = {
   telegram_chat_id?: string | null
 }
 
-type PageProps = {
+
+
+
+type PageProps = {  
   auth: { user: User | null }
   social?: { telegram_bot?: string | null }
   toast?: string | null
@@ -38,6 +42,8 @@ type PageProps = {
 // === Inertia props ===
 const page = usePage<PageProps>()
 const user = computed(() => page.props.auth.user)
+
+const seo = computed(() => page.props.seo ?? { title: null, robots: null })
 
 // === Discord ===
 const isDiscordLinked = computed(() => !!user.value?.discord_user_id)
@@ -81,7 +87,7 @@ const resendVerification = () => {
 </script>
 
 <template>
-  <Head title="Dashboard" />
+  <SeoHead :seo="seo ?? {}" />
 
   <DefaultLayout>
     <section class="w-[90%] 2xl:w-[75%] mx-auto py-10 md:py-16 lg:py-20">
