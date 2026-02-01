@@ -111,7 +111,7 @@ onMounted(() => loadSummary())
                 </DrawerContent>
             </Drawer>
 
-
+            
 
             <!-- Desktop -->
             <nav class="hidden lg:block">

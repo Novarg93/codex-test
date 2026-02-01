@@ -24,6 +24,7 @@ defineProps<{
   <SeoHead :seo="seo" />
 
   <DefaultLayout>
+    
     <Hero/>
     <Sponsors/>
     <Benefits/>

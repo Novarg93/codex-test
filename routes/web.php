@@ -64,22 +64,9 @@ Route::middleware('auth')->delete('/auth/google/unlink', [GoogleOAuthController:
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        $seo = \App\Support\Seo::fromFallback([
-            'title' => 'Dashboard',
-            'description' => 'Account dashboard',
-            'canonical' => url(route('dashboard', [], false)),
-            'robots' => 'noindex,nofollow',
-            'og_title' => 'Dashboard',
-            'og_description' => 'Account dashboard',
-            'og_type' => 'website',
-        ]);
-
-        return Inertia::render('Dashboard', [
-            'seo' => $seo,
-        ]);
-    })->name('dashboard');
-
+    
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])
+        ->name('dashboard');
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

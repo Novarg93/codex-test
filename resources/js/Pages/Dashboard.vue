@@ -34,6 +34,7 @@ type User = {
 
 type PageProps = {  
   auth: { user: User | null }
+  me?: User | null
   social?: { telegram_bot?: string | null }
   toast?: string | null
   [key: string]: unknown
@@ -41,7 +42,7 @@ type PageProps = {
 
 // === Inertia props ===
 const page = usePage<PageProps>()
-const user = computed(() => page.props.auth.user)
+const user = computed(() => page.props.me ?? page.props.auth.user)
 
 const seo = computed(() => page.props.seo ?? { title: null, robots: null })
 

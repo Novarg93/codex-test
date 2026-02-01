@@ -19,14 +19,14 @@ class ProfileController extends Controller
     public function edit(Request $request): Response
     {
         $seo = \App\Support\Seo::fromFallback([
-        'title' => 'Profile',
-        'description' => 'Account settings',
-        'canonical' => url(route('profile.edit', [], false)),
-        'robots' => 'noindex,nofollow',
-        'og_title' => 'Profile',
-        'og_description' => 'Account settings',
-        'og_type' => 'website',
-    ]);
+            'title' => 'Profile',
+            'description' => 'Account settings',
+            'canonical' => url(route('profile.edit', [], false)),
+            'robots' => 'noindex,nofollow',
+            'og_title' => 'Profile',
+            'og_description' => 'Account settings',
+            'og_type' => 'website',
+        ]);
 
 
         return Inertia::render('Profile/Edit', [
@@ -45,7 +45,7 @@ class ProfileController extends Controller
 
         $data = $request->validated();
 
-        
+
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('avatars', 'public');
             $data['avatar'] = $path;
@@ -81,5 +81,53 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    private function mePayload(Request $request): array
+    {
+        $u = $request->user();
+
+        // тут лучше отдавать ровно то, что реально нужно на страницах кабинета
+        return $u->only([
+            'id',
+            'name',
+            'full_name',
+            'email',
+            'email_verified_at',
+            'role',
+
+            'avatar',
+            'avatar_url',
+
+            'discord_user_id',
+            'discord_username',
+            'discord_avatar_url',
+
+            'telegram_user_id',
+            'telegram_username',
+            'telegram_avatar_url',
+
+            'google_user_id',
+            'google_email',
+            'google_avatar',
+        ]);
+    }
+
+     public function dashboard(Request $request): Response
+    {
+        $seo = \App\Support\Seo::fromFallback([
+            'title' => 'Dashboard',
+            'description' => 'Account dashboard',
+            'canonical' => url(route('dashboard', [], false)),
+            'robots' => 'noindex,nofollow',
+            'og_title' => 'Dashboard',
+            'og_description' => 'Account dashboard',
+            'og_type' => 'website',
+        ]);
+
+        return Inertia::render('Dashboard', [
+            'seo' => $seo,
+            'me'  => $this->mePayload($request),
+        ]);
     }
 }

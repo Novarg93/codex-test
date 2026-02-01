@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Tighten\Ziggy\Ziggy;
+
 
 class HandleInertiaRequests extends Middleware
 {
@@ -32,13 +34,18 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => fn() => $request->user()
+                    ? $request->user()->only(['id', 'name', 'role', 'avatar_url'])
+                    : null,
             ],
             'flash' => [
                 'toast'       => fn() => $request->session()->get('toast'),
                 'tg_code'     => fn() => $request->session()->get('tg_code'),
                 'tg_deeplink' => fn() => $request->session()->get('tg_deeplink'),
             ],
+            'ziggy' => fn() => array_merge((new Ziggy('public'))->toArray(), [
+                'location' => $request->url(),
+            ]),
         ];
     }
 }
