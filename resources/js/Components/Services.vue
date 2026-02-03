@@ -4,9 +4,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card";
+} from "@/components/ui/card";
 
-import { Badge } from "@/Components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 enum ProService {
   YES = 1,

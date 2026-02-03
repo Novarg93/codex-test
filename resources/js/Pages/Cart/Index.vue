@@ -10,9 +10,9 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from '@/Components/ui/breadcrumb'
+} from '@/components/ui/breadcrumb'
 import { Link } from '@inertiajs/vue3'
-import SeoHead from '@/Components/SeoHead.vue'
+import SeoHead from '@/components/SeoHead.vue'
 
 const { summary, loadSummary, setSummary } = useCartSummary()
 

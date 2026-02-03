@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import { Badge } from "@/Components/ui/badge";
-import { Button } from "@/Components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-vue-next";
 </script>
 

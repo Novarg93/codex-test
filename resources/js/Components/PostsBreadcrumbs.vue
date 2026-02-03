@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/Components/ui/breadcrumb'
+} from '@/components/ui/breadcrumb'
 
 const props = defineProps<{
   post?: { title: string; slug: string } | null

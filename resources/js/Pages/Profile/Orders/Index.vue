@@ -2,9 +2,9 @@
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
 import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
-import OrderStatusBadge from '@/Components/OrderStatusBadge.vue'
-import Pagination from '@/Components/Pagination.vue'
-import SeoHead from '@/Components/SeoHead.vue'
+import OrderStatusBadge from '@/components/OrderStatusBadge.vue'
+import Pagination from '@/components/Pagination.vue'
+import SeoHead from '@/components/SeoHead.vue'
 
 
 type OrderDto = { id:number; status:string; placed_at:string|null; total_cents:number; items_count:number }

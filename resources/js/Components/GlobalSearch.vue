@@ -3,15 +3,15 @@ import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import axios from 'axios'
 import { router } from '@inertiajs/vue3'
 import { Search, Loader2 } from 'lucide-vue-next'
-import { Button } from '@/Components/ui/button'
-import { Input } from '@/Components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/Components/ui/dialog'
+} from '@/components/ui/dialog'
 
 // Если используешь Ziggy:
 declare const route: (name: string, params?: any) => string

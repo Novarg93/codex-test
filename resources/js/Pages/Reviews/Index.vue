@@ -2,11 +2,11 @@
 import DefaultLayout from "@/Layouts/DefaultLayout.vue";
 import { ref, watch, computed } from "vue";
 import { router } from "@inertiajs/vue3";
-import { Input } from "@/Components/ui/input";
-import { Button } from "@/Components/ui/button";
-import Pagination from "@/Components/Pagination.vue";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Pagination from "@/components/Pagination.vue";
 import { Star } from "lucide-vue-next";
-import SeoHead from '@/Components/SeoHead.vue'
+import SeoHead from '@/components/SeoHead.vue'
 import {
     Select,
     SelectTrigger,
@@ -14,7 +14,7 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-} from "@/Components/ui/select";
+} from "@/components/ui/select";
 
 const props = defineProps<{
     filters: { rating?: number | null; game?: string | null; product?: string | null };

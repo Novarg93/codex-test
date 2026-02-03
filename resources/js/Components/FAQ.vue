@@ -4,7 +4,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/Components/ui/accordion"
+} from "@/components/ui/accordion"
 import { computed } from "vue"
 
 interface FaqIn {

@@ -6,7 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/Components/ui/breadcrumb'
+} from '@/components/ui/breadcrumb'
 import type { Game,  Category , Product,  } from '@/types'
 
 

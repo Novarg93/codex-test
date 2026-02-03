@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
-import OrderStatusBadge from '@/Components/OrderStatusBadge.vue'
+import OrderStatusBadge from '@/components/OrderStatusBadge.vue'
 import axios from 'axios'
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Button } from '@/Components/ui/button'
-import { Input } from "@/Components/ui/input"
-import SeoHead from '@/Components/SeoHead.vue'
+import { Button } from '@/components/ui/button'
+import { Input } from "@/components/ui/input"
+import SeoHead from '@/components/SeoHead.vue'
 
 const props = defineProps<{
   seo:any;

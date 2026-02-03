@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
-import SeoHead from '@/Components/SeoHead.vue'
+import SeoHead from '@/components/SeoHead.vue'
 
 const props = defineProps<{
   seo: any

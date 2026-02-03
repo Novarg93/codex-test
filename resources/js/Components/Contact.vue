@@ -6,7 +6,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { useForm, usePage } from '@inertiajs/vue3';
 import { Textarea } from "./ui/textarea";
-import { Alert, AlertDescription, AlertTitle } from "@/Components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Building2, Phone, Mail, Clock } from "lucide-vue-next";
 
 interface ContactFormeProps {

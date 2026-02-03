@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import DefaultLayout from '@/Layouts/DefaultLayout.vue'
 import { Head } from '@inertiajs/vue3'
-import PostsBreadcrumbs from '@/Components/PostsBreadcrumbs.vue'
-import SeoHead from '@/Components/SeoHead.vue'
+import PostsBreadcrumbs from '@/components/PostsBreadcrumbs.vue'
+import SeoHead from '@/components/SeoHead.vue'
 
 const props = defineProps<{
   seo: any

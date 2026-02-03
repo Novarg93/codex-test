@@ -3,14 +3,14 @@ import DefaultLayout from "@/Layouts/DefaultLayout.vue";
 import { ref, computed } from "vue";
 import axios from "axios";
 import { router } from "@inertiajs/vue3";
-import { Checkbox } from "@/Components/ui/checkbox";
-import { Button } from "@/Components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/Components/ui/card";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
-import { Alert, AlertDescription } from "@/Components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const props = defineProps<{
     orderId: number;

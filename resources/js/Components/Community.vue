@@ -5,9 +5,9 @@ import {
   CardTitle,
   CardFooter,
   CardContent,
-} from "@/Components/ui/card";
+} from "@/components/ui/card";
 
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 
 import DiscordIcon from "@/icons/DiscordIcon.vue";
 </script>
