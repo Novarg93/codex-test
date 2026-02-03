@@ -6,7 +6,10 @@ import path from 'path'
 export default defineConfig({
   plugins: [
     laravel({
-      input: 'resources/js/app.js',
+      input: [
+        'resources/js/app.js',
+        'resources/js/filament/admin.js', 
+      ],
       ssr: 'resources/js/ssr.ts',
       refresh: true,
     }),
