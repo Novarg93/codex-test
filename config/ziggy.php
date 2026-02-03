@@ -33,7 +33,7 @@ return [
             'reviews.*',
             'posts.*',
             'contact.*',
-            'dashboard.*',
+            'dashboard*',
         ],
     ],
 ];
