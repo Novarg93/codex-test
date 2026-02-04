@@ -33,6 +33,7 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'seo' => $seo,
+             'me' => $this->mePayload($request),
         ]);
     }
 
@@ -45,17 +46,15 @@ class ProfileController extends Controller
 
         $data = $request->validated();
 
+        unset($data['email']);
+
 
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('avatars', 'public');
             $data['avatar'] = $path;
         }
 
-        $user->fill($data);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
+        $user->fill($data);       
 
         $user->save();
 

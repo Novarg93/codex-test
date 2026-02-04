@@ -4,35 +4,48 @@ import InputLabel from '@/components/InputLabel.vue'
 import PrimaryButton from '@/components/PrimaryButton.vue'
 import TextInput from '@/components/TextInput.vue'
 import { useForm, usePage } from '@inertiajs/vue3'
+import { watch } from 'vue'
 
-defineProps({
-  mustVerifyEmail: Boolean,
-  status: String,
-})
 
-const user = usePage().props.auth.user
+
+const props = defineProps<{
+  mustVerifyEmail: boolean
+  status?: string
+  me: any
+}>()
+
+const user = props.me ?? {}
 
 
 const form = useForm({
-  name: user.name ?? '',
-  full_name: user.full_name ?? '',
-  email: user.email ?? '',
+  name: '',
+  full_name: '',
+  email: '',
   avatar: null as File | null,
 })
 
 function submit() {
   form.transform((data) => {
-    const d: any = { ...data, _method: 'patch' } // 👈 метод-спуфинг
-    if (!d.avatar) delete d.avatar               // не шлём пустой файл
+    const d: any = { ...data, _method: 'patch' } 
+    if (!d.avatar) delete d.avatar               
     return d
   })
 
   form.post(route('profile.update'), {
-    forceFormData: true,           // 👈 обязательно для файла
-    onSuccess: () => form.reset('avatar'),
-  })
+  forceFormData: true,
+  preserveState: false, 
+  onSuccess: () => form.reset('avatar'),
+})
 }
-
+watch(
+  () => props.me,
+  (me) => {
+    form.name = me?.name ?? ''
+    form.full_name = me?.full_name ?? ''
+    form.email = me?.email ?? ''
+  },
+  { immediate: true }
+)
 
 </script>
 
@@ -61,7 +74,7 @@ function submit() {
 
       <div>
         <InputLabel for="email" value="Email" />
-        <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required />
+        <TextInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required readonly />
         <InputError class="mt-2" :message="form.errors.email" />
       </div>
 
