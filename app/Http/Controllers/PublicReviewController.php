@@ -57,7 +57,7 @@ class PublicReviewController extends Controller
         // ✅ отдадим список игр для выбора (первый экран без запросов)
         $games = Game::query()
             ->orderBy('name')
-            ->get(['id', 'name', 'image_url']);
+            ->get(['id', 'name', 'image']);
 
         $baseAll = Review::query()
             ->where('status', Review::STATUS_APPROVED)
