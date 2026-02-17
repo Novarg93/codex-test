@@ -83,14 +83,14 @@ const reviewList: ReviewProps[] = [
 <template>
   <section
     
-    class="w-[90%] 2xl:w-[75%] mx-auto py-24 sm:py-32 "
+    class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
     <div class="text-center mb-8">
-      <h2 class="text-lg text-primary text-center mb-2 tracking-wider">
+      <h2 class="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">
         Testimonials
       </h2>
 
-      <h2 class="text-3xl md:text-4xl text-center font-bold mb-4">
+      <h2 class="mb-4 text-center text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
         Hear What Our 1000+ Clients Say
       </h2>
     </div>
@@ -99,7 +99,7 @@ const reviewList: ReviewProps[] = [
       :opts="{
         align: 'start',
       }"
-      class="relative w-[75%] sm:w-[90%] lg:max-w-screen-xl mx-auto"
+      class="relative mx-auto w-[75%] sm:w-[90%] lg:max-w-screen-xl"
     >
       <CarouselContent>
         <CarouselItem
@@ -107,17 +107,17 @@ const reviewList: ReviewProps[] = [
           :key="review.name"
           class="md:basis-1/2 lg:basis-1/3"
         >
-          <Card class="bg-muted/50 dark:bg-card border-border">
+          <Card class="rounded-sm border border-[#2E333D] bg-[#1D232D]">
             <CardContent class="pt-6 pb-0">
               <div class="flex gap-1 pb-6">
-                <Star class="size-4 fill-primary text-primary" />
-                <Star class="size-4 fill-primary text-primary" />
-                <Star class="size-4 fill-primary text-primary" />
-                <Star class="size-4 fill-primary text-primary" />
-                <Star class="size-4 fill-primary text-primary" />
+                <Star class="size-4 fill-[#4A6CF7] text-[#4A6CF7]" />
+                <Star class="size-4 fill-[#4A6CF7] text-[#4A6CF7]" />
+                <Star class="size-4 fill-[#4A6CF7] text-[#4A6CF7]" />
+                <Star class="size-4 fill-[#4A6CF7] text-[#4A6CF7]" />
+                <Star class="size-4 fill-[#4A6CF7] text-[#4A6CF7]" />
               </div>
 
-              "{{ review.comment }}"
+              <p class="text-base font-medium text-[#79808A]">"{{ review.comment }}"</p>
             </CardContent>
 
             <CardHeader>
@@ -131,16 +131,16 @@ const reviewList: ReviewProps[] = [
                 </Avatar>
 
                 <div class="flex flex-col">
-                  <CardTitle class="text-lg">{{ review.name }}</CardTitle>
-                  <CardDescription>{{ review.userName }}</CardDescription>
+                  <CardTitle class="text-lg text-white">{{ review.name }}</CardTitle>
+                  <CardDescription class="text-[#79808A]">{{ review.userName }}</CardDescription>
                 </div>
               </div>
             </CardHeader>
           </Card>
         </CarouselItem>
       </CarouselContent>
-      <CarouselPrevious class="border-border hover:bg-border  disabled:opacity-50" />
-      <CarouselNext class="border-border hover:bg-border  disabled:opacity-50" />
+      <CarouselPrevious class="border-[#414652] bg-[#1D232D] text-[#79808A] hover:bg-[#222C40] hover:text-[#4A6CF7] disabled:opacity-50" />
+      <CarouselNext class="border-[#414652] bg-[#1D232D] text-[#79808A] hover:bg-[#222C40] hover:text-[#4A6CF7] disabled:opacity-50" />
     </Carousel>
   </section>
 </template>

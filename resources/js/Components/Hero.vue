@@ -6,59 +6,58 @@ import { ArrowRight } from "lucide-vue-next";
 </script>
 
 <template>
-    <section class="w-[90%] 2xl:w-[75%] mx-auto">
-        <div class="grid place-items-center lg:max-w-screen-xl gap-8 mx-auto py-20 md:py-32">
-            <div class="text-center space-y-8">
-                <Badge  class="text-sm p-2 rounded-full bg-transparent border border-border">
+    <section class="mx-auto w-[90%] pt-28 pb-24 lg:pt-[170px] lg:pb-[120px] 2xl:w-[75%]">
+        <div class="mx-auto grid place-items-center gap-10 lg:max-w-screen-xl">
+            <div class="space-y-8 text-center">
+                <Badge class="rounded-sm border border-[#2E333D] bg-[#1D232D] px-3 py-2 text-sm font-medium text-[#79808A]">
                     <span class="mr-2 text-primary">
-                        <Badge class="bg-primary text-white p-1 rounded-full">New</Badge>
+                        <Badge class="rounded-sm bg-[#4A6CF7] p-1 text-white">New</Badge>
                     </span>
                     <span> Design is out now! </span>
                 </Badge>
 
-                <div class="max-w-screen-md mx-auto text-center text-5xl md:text-6xl font-bold">
-                    <h1 >
+                <div class="mx-auto max-w-[920px] text-center">
+                    <h1 class="text-2xl font-semibold leading-tight text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
                         Experience the
                         <span
-                            class="text-transparent bg-gradient-to-r from-[#D247BF] to-primary bg-clip-text">Shadcn/Vue
+                            class="bg-gradient-to-r from-[#9BB1FF] to-[#4A6CF7] bg-clip-text text-transparent">Shadcn/Vue
                         </span>
                         landing page
                     </h1>
                 </div>
 
-                <p class="max-w-screen-sm mx-auto text-xl text-muted-foreground">
+                <p class="mx-auto max-w-[780px] text-base font-medium text-[#79808A] sm:text-xl">
                     We're more than just a tool, we're a community of passionate creators.
                     Get access to exclusive resources, tutorials, and support.
                 </p>
 
-                <div class="space-y-4 md:space-y-0 md:space-x-4">
-                    <Button class="w-5/6 md:w-1/4 font-bold group/arrow">
+                <div class="space-y-4 md:space-x-4 md:space-y-0">
+                    <Button class="group/arrow w-5/6 rounded-sm bg-[#4A6CF7] px-8 py-[14px] font-semibold text-white transition hover:bg-[#4A6CF7]/90 md:w-1/4">
                         Get Started
                         <ArrowRight class="size-5 ml-2 group-hover/arrow:translate-x-1 transition-transform" />
                     </Button>
 
-                    <Button as-child variant="secondary" class="w-5/6 md:w-1/4 font-bold">
+                    <Button as-child variant="secondary" class="w-5/6 rounded-sm border border-[#414652] bg-[#222C40] px-8 py-[14px] font-semibold text-white transition hover:bg-[#4A6CF7] md:w-1/4">
                         <a href="https://github.com/leoMirandaa/shadcn-vue-landing-page.git" target="_blank">Github
                             respository</a>
                     </Button>
                 </div>
             </div>
 
-            <div class="relative group mt-14">
+            <div class="relative mt-14 group">
                 <!-- gradient shadow -->
                 <div
-                    class="absolute -top-6 right-12 w-[90%] h-12 lg:h-[80%] bg-primary/50 blur-3xl rounded-full img-shadow-animation">
+                    class="img-shadow-animation absolute -top-6 right-12 h-20 w-[90%] rounded-full bg-[#4A6CF7]/35 blur-3xl lg:h-[80%]">
                 </div>
 
-                <img class="w-full md:w-[1200px] mx-auto rounded-lg relative rouded-lg leading-none flex items-center border-border border-t-2 border-t-primary/30 img-border-animation"
+                <img class="img-border-animation relative mx-auto flex w-full items-center rounded-sm border border-[#2E333D] border-t-2 border-t-[#4A6CF7]/40 bg-[#1D232D] leading-none md:w-[1200px]"
                     src="/public/images/hero-image-dark.jpg" alt="dashboard using shadcn-vue" />
 
                 <!-- gradient effect img -->
                 <div
-                    class=" bottom-0 left-0 w-full h-20 md:h-28 bg-gradient-to-b from-background/0 via-background/50 to-background rounded-lg">
+                    class="bottom-0 left-0 h-20 w-full rounded-sm bg-gradient-to-b from-transparent via-[#111722]/40 to-[#111722] md:h-28">
                 </div>
             </div>
         </div>
     </section>
 </template>
-

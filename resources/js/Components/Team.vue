@@ -182,12 +182,12 @@ const socialIcon = (socialName: string) => {
 
 <template>
   <section   
-   class="w-[90%] 2xl:w-[75%] mx-auto py-24 sm:py-32 "
+   class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
     <div class="text-center mb-8">
-      <h2 class="text-lg text-primary text-center mb-2 tracking-wider">Team</h2>
+      <h2 class="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">Team</h2>
 
-      <h2 class="text-3xl md:text-4xl text-center font-bold">
+      <h2 class="text-center text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
         The Company Dream Team
       </h2>
     </div>
@@ -204,19 +204,19 @@ const socialIcon = (socialName: string) => {
           socialNetworks,
         } in teamList"
         :key="imageUrl"
-        class="bg-muted/60 dark:bg-card flex flex-col h-full overflow-hidden group/hoverimg"
+        class="group/hoverimg flex h-full flex-col overflow-hidden rounded-sm border border-[#2E333D] bg-[#1D232D]"
       >
         <CardHeader class="p-0 gap-0">
           <div class="h-full overflow-hidden">
             <img
               :src="imageUrl"
               alt=""
-              class="w-full aspect-square object-cover saturate-0 transition-all duration-200 ease-linear size-full group-hover/hoverimg:saturate-100 group-hover/hoverimg:scale-[1.01]"
+              class="size-full aspect-square w-full object-cover saturate-0 transition-all duration-200 ease-linear group-hover/hoverimg:scale-[1.01] group-hover/hoverimg:saturate-100"
             />
           </div>
-          <CardTitle class="py-6 pb-4 px-6"
+          <CardTitle class="px-6 pb-4 pt-6 text-xl font-semibold text-white"
             >{{ firstName }}
-            <span class="text-primary">{{ lastName }}</span>
+            <span class="text-[#4A6CF7]">{{ lastName }}</span>
           </CardTitle>
         </CardHeader>
 
@@ -224,20 +224,20 @@ const socialIcon = (socialName: string) => {
           v-for="(position, index) in positions"
           :key="index"
           :class="{
-            'pb-0 text-muted-foreground ': true,
+            'pb-0 text-[#79808A] ': true,
             'pb-4': index === positions.length - 1,
           }"
         >
           {{ position }}<span v-if="index < positions.length - 1">,</span>
         </CardContent>
 
-        <CardFooter class="space-x-4 mt-auto">
+        <CardFooter class="mt-auto space-x-4">
           <a
             v-for="{ name, url } in socialNetworks"
             key="name"
             :href="url"
             target="_blank"
-            class="hover:opacity-80 transition-all"
+            class="text-[#79808A] transition hover:text-[#4A6CF7]"
             :aria-label="`Visit our ${name} page`"
           >
             <component :is="socialIcon(name)" />

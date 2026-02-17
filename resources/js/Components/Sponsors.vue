@@ -71,13 +71,13 @@ const iconMap: Record<
 <template>
   <section
     id="sponsors"
-    class="max-w-[75%] mx-auto pb-24 sm:pb-32"
+    class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
-    <h2 class="text-lg md:text-xl text-center mb-6">Our Platinum Sponsors</h2>
+    <h2 class="mb-8 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">Our Platinum Sponsors</h2>
 
-    <div class="mx-auto">
+    <div class="mx-auto rounded-sm border border-[#2E333D] bg-[#1D232D]/70 px-4 py-5 backdrop-blur">
       <Marquee
-        class="gap-[3rem]"
+        class="gap-[3rem] text-[#79808A]"
         :pauseOnHover="true"
         :fade="true"
         innerClassName="gap-[3rem]"
@@ -86,10 +86,10 @@ const iconMap: Record<
           v-for="{ icon, name } in sponsors"
           :key="name"
         >
-          <div class="flex items-center text-xl md:text-2xl font-medium">
+          <div class="flex items-center text-xl font-medium md:text-2xl">
             <component
               :is="iconMap[icon]"
-              class="mr-2"
+              class="mr-2 text-[#4A6CF7]"
               stroke-width="3"
             />
             {{ name }}

@@ -10,8 +10,8 @@ import { computed } from "vue"
 interface FaqIn {
   id?: number | string
   question: string
-  answer: string   // может быть HTML из RichEditor
-  value?: string   // опционально
+  answer: string
+  value?: string
 }
 
 const props = defineProps<{
@@ -20,7 +20,6 @@ const props = defineProps<{
   subtitle?: string
 }>()
 
-// локальный фолбэк (на случай отсутствия пропса)
 const fallbackFaqs: FaqIn[] = [
   { question: "Is this template free?", answer: "Yes. It is a free Shadcn/Vue template.", value: "item-1" },
   { question: "Duis aute irure dolor in reprehenderit in voluptate velit?", answer: "Lorem ipsum dolor sit amet...", value: "item-2" },
@@ -29,7 +28,6 @@ const fallbackFaqs: FaqIn[] = [
   { question: "Enim ad minim veniam, quis nostrud exercitation ullamco laboris?", answer: "consectetur adipisicing elit. Sint labore.", value: "item-5" },
 ]
 
-// подготавливаем список к рендеру
 const faqItems = computed(() =>
   (props.faqs?.length ? props.faqs : fallbackFaqs).map((f, idx) => ({
     ...f,
@@ -39,43 +37,42 @@ const faqItems = computed(() =>
 </script>
 
 <template>
-  <section id="faq" class="mx-auto w-[90%] md:w-[700px] py-24 sm:py-32">
-    <div class="text-center mb-8">
-      <h2 class="text-lg text-primary text-center mb-2 tracking-wider">
+  <section id="faq" class="mx-auto w-[90%] pt-14 sm:pt-20 sm:pb-20 lg:pt-[130px] md:w-[700px] ">
+    <div class="mb-8 text-center">
+      <h2 class="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">
         {{ subtitle ?? "FAQS" }}
       </h2>
 
-      <h2 class="text-3xl md:text-4xl text-center font-bold">
+      <h2 class="text-center text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
         {{ title ?? "Common Questions" }}
       </h2>
     </div>
 
-    <Accordion type="single" collapsible class="AccordionRoot" v-if="faqItems.length">
+    <Accordion v-if="faqItems.length" type="single" collapsible class="AccordionRoot">
       <AccordionItem
         v-for="faq in faqItems"
         :key="faq._value"
         :value="faq._value"
-        class="px-4 my-4 border border-border rounded-lg bg-card"
+        class="my-4 rounded-sm border border-[#2E333D] bg-[#1D232D] px-4"
       >
-        <AccordionTrigger class="text-left font-medium text-base">
+        <AccordionTrigger class="text-left text-base font-medium text-white hover:text-[#4A6CF7]">
           {{ faq.question }}
         </AccordionTrigger>
 
-        <!-- ответ может быть HTML: если источник доверенный (Filament RichEditor), используем v-html -->
         <AccordionContent
-          class="text-muted-foreground font-medium text-base"
+          class="text-base font-medium text-[#79808A]"
           v-html="faq.answer"
         />
       </AccordionItem>
     </Accordion>
 
-    <div v-else class="text-center text-muted-foreground">
-      We’ll add FAQs soon.
+    <div v-else class="text-center text-[#79808A]">
+      We will add FAQs soon.
     </div>
 
-    <h3 class="font-medium mt-4">
+    <h3 class="mt-4 font-medium text-white">
       Still have questions?
-      <a href="#" class="text-muted-foreground underline">Contact us</a>
+      <a href="#" class="text-[#79808A] underline transition hover:text-[#4A6CF7]">Contact us</a>
     </h3>
   </section>
 </template>

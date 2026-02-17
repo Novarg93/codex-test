@@ -82,17 +82,17 @@ const iconMap: Record<
 <template>
   <section
    
-    class="w-[90%] 2xl:w-[75%] mx-auto py-24 sm:py-32"
+    class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
-    <h2 class="text-lg text-primary text-center mb-2 tracking-wider">
+    <h2 class="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">
       Features
     </h2>
 
-    <h2 class="text-3xl md:text-4xl text-center font-bold mb-4">
+    <h2 class="mb-4 text-center text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
       What Makes Us Different
     </h2>
 
-    <h3 class="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8">
+    <h3 class="mx-auto mb-8 text-center text-base font-medium text-[#79808A] sm:text-xl md:w-1/2">
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatem
       fugiat, odit similique quasi sint reiciendis quidem iure veritatis optio
       facere tenetur.
@@ -103,23 +103,23 @@ const iconMap: Record<
         v-for="{ icon, title, description } in featureList"
         :key="title"
       >
-        <Card class="h-full bg-background border-0 shadow-none">
+        <Card class="h-full rounded-sm border border-[#2E333D] bg-[#1D232D] shadow-none transition hover:bg-[#222C40]">
           <CardHeader class="flex justify-center items-center">
             <div
-              class="bg-primary/20 p-2 rounded-full ring-8 ring-primary/10 mb-4"
+              class="mb-4 rounded-full border border-[#414652] bg-[#4A6CF7]/20 p-2 ring-8 ring-[#4A6CF7]/10"
             >
               <component
                 :is="iconMap[icon]"
-                class="size-6 text-primary"
+                class="size-6 text-[#4A6CF7]"
               />
             </div>
 
-            <CardTitle class="text-2xl font-semibold leading-none tracking-tight">
+            <CardTitle class="text-xl font-semibold leading-tight tracking-tight text-white sm:text-2xl">
               {{ title }}
             </CardTitle>
           </CardHeader>
 
-          <CardContent class="text-muted-foreground text-center">
+          <CardContent class="text-center text-base font-medium text-[#79808A]">
             {{ description }}
           </CardContent>
         </Card>

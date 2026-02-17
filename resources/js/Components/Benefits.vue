@@ -64,16 +64,16 @@ const iconMap: Record<
 <template>
   <section
     
-    class="w-[90%] 2xl:w-[75%] mx-auto py-24 sm:py-32 "
+    class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
     <div class="grid lg:grid-cols-2 place-items-center lg:gap-24">
       <div>
-        <h2 class="text-lg text-primary mb-2 tracking-wider">Benefits</h2>
+        <h2 class="mb-2 text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">Benefits</h2>
 
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        <h2 class="mb-4 text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
           Your Shortcut to Success
         </h2>
-        <p class="text-xl text-muted-foreground mb-8">
+        <p class="mb-8 text-base font-medium text-[#79808A] sm:text-xl">
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Non ducimus
           reprehenderit architecto rerum similique facere odit deleniti
           necessitatibus quo quae.
@@ -84,25 +84,25 @@ const iconMap: Record<
         <Card
           v-for="({ icon, title, description }, index) in benefitList"
           :key="title"
-          class="bg-muted/50 dark:bg-card hover:bg-background dark:hover:bg-background border-border transition-all delay-75 group/number"
+          class="group/number rounded-sm border border-[#2E333D] bg-[#1D232D] transition-all delay-75 hover:bg-[#222C40]"
         >
           <CardHeader>
             <div class="flex justify-between">
               <component
-                class="size-8 mb-6 text-primary"
+                class="mb-6 size-8 text-[#4A6CF7]"
                 :is="iconMap[icon]"
               />
 
               <span
-                class="text-5xl text-muted-foreground/15 font-medium transition-all delay-75 group-hover/number:text-muted-foreground/30"
+                class="text-5xl font-medium text-[#79808A]/15 transition-all delay-75 group-hover/number:text-[#79808A]/40"
                 >0{{ index + 1 }}</span
               >
             </div>
 
-            <CardTitle class="text-2xl font-semibold leading-none tracking-tight">{{ title }}</CardTitle>
+            <CardTitle class="text-xl font-semibold leading-tight tracking-tight text-white sm:text-2xl">{{ title }}</CardTitle>
           </CardHeader>
 
-          <CardContent class="text-muted-foreground">
+          <CardContent class="text-base font-medium text-[#79808A]">
             {{ description }}
           </CardContent>
         </Card>

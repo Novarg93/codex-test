@@ -53,12 +53,13 @@ onMounted(() => loadSummary())
 
 
 <template>
-    <div class="flex flex-col min-h-screen">
+    <div class="relative flex min-h-screen flex-col bg-[#111722] text-white">
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-[#4A6CF7]/20 via-[#4A6CF7]/5 to-transparent"></div>
         <header
-            class='w-[90%] 2xl:w-[75%]  mx-auto border border-border mt-10  rounded-2xl flex justify-between items-center p-2 bg-card shadow-md'>
-            <Link :href="route('home')" class="font-bold text-lg flex items-center">
+            class='sticky top-4 z-50 mx-auto mt-6 flex w-[90%] items-center justify-between rounded-sm border border-[#2E333D] bg-[#1D232D]/85 px-3 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur md:px-6 2xl:w-[75%]'>
+            <Link :href="route('home')" class="flex items-center text-lg font-semibold tracking-tight text-white">
             <ChevronsDown
-                class="bg-gradient-to-tr from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border border-transparent text-white" />
+                class="mr-2 h-9 w-9 rounded-sm border border-transparent bg-[#4A6CF7] p-1 text-white shadow-[0_8px_24px_rgba(74,108,247,0.45)]" />
             
             </Link>
             <!-- Mobile -->
@@ -66,23 +67,23 @@ onMounted(() => loadSummary())
             <Drawer direction="left" v-model:open="isOpen">
                 <DrawerTrigger class="lg:hidden" as-child>
                     
-                    <Button variant="ghost">
+                    <Button variant="ghost" class="h-10 w-10 rounded-full border border-[#414652] bg-[#222C40]/70 text-white hover:bg-[#4A6CF7]">
                         <Menu />
                     </Button>
                 </DrawerTrigger>
                 <DrawerContent
-                    class="flex w-full flex-col justify-between border-border rounded-tr-2xl rounded-br-2xl ">
+                    class="fixed inset-y-0 left-0 flex h-screen w-full max-w-sm flex-col justify-between rounded-none border-r border-[#2E333D] bg-[#111722] text-white sm:rounded-tr-sm sm:rounded-br-sm">
                     <div>
 
-                        <DrawerHeader class="bg-card p-2 mx-2 border border-border  my-10 rounded-2xl">
+                        <DrawerHeader class="mx-4 my-6 rounded-sm border border-[#2E333D] bg-[#1D232D] p-3">
                             <DrawerTitle class="flex justify-between items-center">
-                                <a href="/" class="flex items-center">
+                                <a href="/" class="flex items-center font-semibold text-white">
                                     <ChevronsDown
-                                        class="bg-gradient-to-tr border-primary from-primary/70 via-primary to-primary/70 rounded-lg size-9 mr-2 border text-white" />
+                                        class="mr-2 size-9 rounded-sm border border-transparent bg-[#4A6CF7] p-1 text-white" />
                                     ShadcnVue
                                 </a>
                                 <DrawerClose>
-                                    <Button variant="ghost">
+                                    <Button variant="ghost" class="h-10 w-10 rounded-full border border-[#414652] bg-[#222C40]/70 text-white hover:bg-[#4A6CF7]">
                                         <X />
                                     </Button>
                                 </DrawerClose>
@@ -92,19 +93,19 @@ onMounted(() => loadSummary())
                                 Navigation Menu
                             </DrawerDescription>
                         </DrawerHeader>
-                        <div class="flex flex-col items-center gap-2">
-                            <Link :href="route('games.index')">Games</Link>
-                            <Link :href="route('posts.index')">Blog</Link>
-                            <Link :href="route('reviews.public')">Reviews</Link>
-                            <Link :href="route('home')">Contact Us</Link>
+                        <div class="flex flex-col gap-3 px-6 text-base font-medium">
+                            <Link :href="route('games.index')" class="rounded-sm border border-transparent px-3 py-[10px] text-[#79808A] transition hover:border-[#2E333D] hover:bg-[#1D232D] hover:text-[#4A6CF7]">Games</Link>
+                            <Link :href="route('posts.index')" class="rounded-sm border border-transparent px-3 py-[10px] text-[#79808A] transition hover:border-[#2E333D] hover:bg-[#1D232D] hover:text-[#4A6CF7]">Blog</Link>
+                            <Link :href="route('reviews.public')" class="rounded-sm border border-transparent px-3 py-[10px] text-[#79808A] transition hover:border-[#2E333D] hover:bg-[#1D232D] hover:text-[#4A6CF7]">Reviews</Link>
+                            <Link :href="route('home')" class="rounded-sm border border-transparent px-3 py-[10px] text-[#79808A] transition hover:border-[#2E333D] hover:bg-[#1D232D] hover:text-[#4A6CF7]">Contact Us</Link>
                         </div>
-                        <Separator class="my-4" />
-                        <div v-if="!$page.props.auth.user" class="flex flex-col gap-4 items-center">
-                            <Link class="hover:underline " :href="route('login')">Login</Link>
-                            <Link class="hover:underline " :href="route('register')">Sign Up</Link>
+                        <Separator class="my-6 bg-[#2E333D]" />
+                        <div v-if="!$page.props.auth.user" class="flex flex-col gap-3 px-6 text-base font-medium">
+                            <Link class="rounded-sm border border-[#2E333D] bg-transparent px-6 py-[10px] text-center text-[#79808A] transition hover:border-[#4A6CF7] hover:text-[#4A6CF7]" :href="route('login')">Login</Link>
+                            <Link class="rounded-sm bg-[#4A6CF7] px-6 py-[10px] text-center font-semibold text-white transition hover:bg-[#4A6CF7]/90" :href="route('register')">Sign Up</Link>
                         </div>
-                        <div v-if="$page.props.auth.user" class="flex flex-col items-center">
-                            <Link class="hover:underline " :href="route('dashboard')">Dashboard</Link>
+                        <div v-if="$page.props.auth.user" class="flex flex-col px-6">
+                            <Link class="rounded-sm border border-[#2E333D] bg-[#1D232D] px-6 py-[10px] text-center font-medium text-[#79808A] transition hover:border-[#4A6CF7] hover:text-[#4A6CF7]" :href="route('dashboard')">Dashboard</Link>
                         </div>
                     </div>
 
@@ -115,18 +116,18 @@ onMounted(() => loadSummary())
 
             <!-- Desktop -->
             <nav class="hidden lg:block">
-                <ul class="flex gap-4 items-center">
+                <ul class="flex items-center lg:space-x-10">
                     <li>
-                        <Link class="hover:underline " :href="route('games.index')">Games</Link>
+                        <Link class="text-sm font-medium text-[#79808A] transition hover:text-[#4A6CF7]" :href="route('games.index')">Games</Link>
                     </li>
                     <li>
-                        <Link class="hover:underline " :href="route('posts.index')">Blog</Link>
+                        <Link class="text-sm font-medium text-[#79808A] transition hover:text-[#4A6CF7]" :href="route('posts.index')">Blog</Link>
                     </li>
                     <li>
-                        <Link class="hover:underline " :href="route('reviews.public')">Reviews</Link>
+                        <Link class="text-sm font-medium text-[#79808A] transition hover:text-[#4A6CF7]" :href="route('reviews.public')">Reviews</Link>
                     </li>
                     <li>
-                        <Link class="hover:underline " :href="route('contact.show')">Contact Us</Link>
+                        <Link class="text-sm font-medium text-[#79808A] transition hover:text-[#4A6CF7]" :href="route('contact.show')">Contact Us</Link>
                     </li>
                     <GlobalSearch />
                     
@@ -135,23 +136,23 @@ onMounted(() => loadSummary())
 
             
             
-            <div class="hidden lg:flex pr-2 xl:pr-4 gap-6">
+            <div class="hidden gap-6 pr-2 lg:flex xl:pr-4">
                 
-                <div class="flex items-center gap-4 ">
-                    <span v-if="summary.total_qty">{{ formatPrice(summary.total_sum_cents) }}</span>
-                    <a href="/cart" class="relative">
+                <div class="flex items-center gap-4 rounded-sm border border-[#2E333D] bg-[#222C40]/70 px-4 py-2">
+                    <span v-if="summary.total_qty" class="text-sm font-medium text-[#79808A]">{{ formatPrice(summary.total_sum_cents) }}</span>
+                    <a href="/cart" class="relative text-[#79808A] transition hover:text-[#4A6CF7]">
 
                         <span v-if="summary.total_qty"
-                            class="absolute -top-2 -right-2 bg-primary text-white text-xs px-2 py-0.5 rounded-full">
+                            class="absolute -right-2 -top-2 rounded-full bg-[#4A6CF7] px-2 py-0.5 text-xs text-white">
                             {{ summary.total_qty }}
                         </span>
                         <ShoppingCart />
                     </a>
 
                 </div>
-                <div v-if="!$page.props.auth.user" class="flex  justify-between gap-4 items-center">
-                    <Link class="hover:underline " :href="route('login')">Login</Link>
-                    <Link class="hover:underline " :href="route('register')">Sign Up</Link>
+                <div v-if="!$page.props.auth.user" class="flex items-center justify-between gap-3">
+                    <Link class="rounded-sm border border-[#2E333D] px-6 py-[10px] text-sm font-medium text-[#79808A] transition hover:border-[#4A6CF7] hover:text-[#4A6CF7]" :href="route('login')">Login</Link>
+                    <Link class="rounded-sm bg-[#4A6CF7] px-6 py-[10px] text-sm font-semibold text-white transition hover:bg-[#4A6CF7]/90" :href="route('register')">Sign Up</Link>
                 </div>
                 <div v-if="$page.props.auth.user" class="flex justify-between items-center">
                     <DropdownMenu>
@@ -159,40 +160,40 @@ onMounted(() => loadSummary())
                             
                             <template v-if="user?.avatar_url">
                                 <img :src="user.avatar_url" alt="User avatar"
-                                    class="h-8 w-8 rounded-full object-cover" @error="$event.target.src = ''" />
+                                    class="h-9 w-9 rounded-full border border-[#414652] object-cover" @error="$event.target.src = ''" />
                             </template>
                             <template v-else>
                                 <div
-                                    class="h-8 w-8 items-center justify-center   flex ">
-                                    <UserIcon  />
+                                    class="flex h-9 w-9 items-center justify-center rounded-full border border-[#414652] bg-[#222C40]/80 text-[#79808A] transition hover:text-[#4A6CF7]">
+                                    <UserIcon />
                                 </div>
                             </template>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent class="border border-border">
+                        <DropdownMenuContent class="border border-[#2E333D] bg-[#1D232D] text-white">
 
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
+                            <DropdownMenuLabel class="text-sm font-semibold text-white">My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator class="bg-[#2E333D]" />
                             <Link :href="route('dashboard')">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem class="text-[#79808A] focus:bg-[#222C40] focus:text-[#4A6CF7]">
                                 Dashboard
 
 
                             </DropdownMenuItem>
                             </Link>
                             <Link :href="route('orders.index')">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem class="text-[#79808A] focus:bg-[#222C40] focus:text-[#4A6CF7]">
                                 Orders
 
                             </DropdownMenuItem>
                             </Link>
                             <Link :href="route('profile.edit')">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem class="text-[#79808A] focus:bg-[#222C40] focus:text-[#4A6CF7]">
                                 Settings
 
                             </DropdownMenuItem>
                             </Link>
                             <Link class="w-full" :href="route('logout')" method="post" as="button">
-                            <DropdownMenuItem class="w-full">
+                            <DropdownMenuItem class="w-full text-[#79808A] focus:bg-[#222C40] focus:text-[#4A6CF7]">
                                 Logout
 
                             </DropdownMenuItem>
@@ -207,89 +208,89 @@ onMounted(() => loadSummary())
         </header>
 
 
-        <main class="flex-grow">
+        <main class="relative z-10 flex-grow">
             <slot />
         </main>
 
         <footer
-            class='w-[90%] 2xl:w-[75%]  mx-auto border border-border   rounded-2xl  p-4 lg:p-8 bg-card shadow-md mb-10'>
-            <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-x-12 gap-y-8">
+            class='mx-auto mb-10 w-[90%] rounded-sm border border-[#2E333D] bg-[#1D232D]/85 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.2)] backdrop-blur lg:p-8 2xl:w-[75%]'>
+            <div class="grid grid-cols-2 gap-x-12 gap-y-8 md:grid-cols-4 xl:grid-cols-6">
                 <div class="col-span-full xl:col-span-2">
-                    <a href="#" class="flex font-bold items-center">
+                    <a href="#" class="flex items-center font-semibold text-white">
                         <ChevronsDown
-                            class="bg-gradient-to-tr from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border border-transparent text-white" />
+                            class="mr-2 h-9 w-9 rounded-sm border border-transparent bg-[#4A6CF7] p-1 text-white" />
 
                         <h3 class="text-2xl">Shadcn-Vue</h3>
                     </a>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <h3 class="font-bold text-lg">Contact</h3>
+                    <h3 class="text-lg font-semibold text-white">Contact</h3>
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Github
                         </a>
                     </div>
 
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Twitter
                         </a>
                     </div>
 
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Instagram
                         </a>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <h3 class="font-bold text-lg">Legal</h3>
+                    <h3 class="text-lg font-semibold text-white">Legal</h3>
                     <div v-for="p in legalPages" :key="p.id">
-                        <Link :href="p.url" class="opacity-60 hover:opacity-100">
+                        <Link :href="p.url" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                         {{ p.name }}
                         </Link>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <h3 class="font-bold text-lg">Help</h3>
+                    <h3 class="text-lg font-semibold text-white">Help</h3>
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Contact Us
                         </a>
                     </div>
 
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             FAQ
                         </a>
                     </div>
 
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Feedback
                         </a>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <h3 class="font-bold text-lg">Socials</h3>
+                    <h3 class="text-lg font-semibold text-white">Socials</h3>
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Twitch
                         </a>
                     </div>
 
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Discord
                         </a>
                     </div>
 
                     <div>
-                        <a href="#" class="opacity-60 hover:opacity-100">
+                        <a href="#" class="text-sm text-[#79808A] transition hover:text-[#4A6CF7]">
                             Dribbble
                         </a>
                     </div>

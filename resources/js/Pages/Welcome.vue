@@ -20,21 +20,22 @@ defineProps<{
 </script>
 
 <template>
-  
   <SeoHead :seo="seo" />
 
   <DefaultLayout>
-    
-    <Hero/>
-    <Sponsors/>
-    <Benefits/>
-    <Features/>
-    <Services/>
-    <HowItWorks/>
-    <Testimonials/>
-    <Team/>
-    <Community/>
-    <Pricing/>
-    <FAQ :faqs="faqs"/>
+    <div class="relative overflow-hidden">
+      <div class="pointer-events-none absolute left-1/2 top-8 h-80 w-[85%] -translate-x-1/2 rounded-full bg-[#4A6CF7]/10 blur-3xl"></div>
+      <Hero />
+      <Sponsors />
+      <Benefits />
+      <Features />
+      <Services />
+      <HowItWorks />
+      <Testimonials />
+      <Team />
+      <Community />
+      <Pricing />
+      <FAQ :faqs="faqs" />
+    </div>
   </DefaultLayout>
 </template>

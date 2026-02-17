@@ -47,37 +47,37 @@ const serviceList: ServiceProps[] = [
 
 <template>
   <section    
-   class="w-[90%] 2xl:w-[75%] mx-auto py-24 sm:py-32 "
+   class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
-    <h2 class="text-lg text-primary text-center mb-2 tracking-wider">
+    <h2 class="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">
       Services
     </h2>
 
-    <h2 class="text-3xl md:text-4xl text-center font-bold mb-4">
+    <h2 class="mb-4 text-center text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
       Grow Your Business
     </h2>
-    <h3 class="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8">
+    <h3 class="mx-auto mb-8 text-center text-base font-medium text-[#79808A] sm:text-xl md:w-1/2">
       From marketing and sales to operations and strategy, we have the expertise
       to help you achieve your goals.
     </h3>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
     <div
-      class="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 w-full lg:w-[60%] mx-auto"
+      class="mx-auto grid w-full gap-4 sm:grid-cols-2 lg:w-[60%] lg:grid-cols-2"
     >
       <div
         v-for="{ title, description, pro } in serviceList"
         :key="title"
       >
-        <Card class="bg-muted/60 dark:bg-card h-full relative border-border">
+        <Card class="relative h-full rounded-sm border border-[#2E333D] bg-[#1D232D] transition hover:bg-[#222C40]">
           <CardHeader>
-            <CardTitle class="text-2xl font-semibold leading-none tracking-tight">{{ title }}</CardTitle>
-            <CardDescription>{{ description }}</CardDescription>
+            <CardTitle class="text-xl font-semibold leading-tight tracking-tight text-white sm:text-2xl">{{ title }}</CardTitle>
+            <CardDescription class="text-base font-medium text-[#79808A]">{{ description }}</CardDescription>
           </CardHeader>
           <Badge
             v-if="pro === ProService.YES"
             variant="secondary"
-            class="absolute bg-secondary p-1 px-2 rounded-full -top-2 -right-3"
+            class="absolute -right-3 -top-2 rounded-sm bg-[#4A6CF7] px-2 py-1 text-xs font-semibold text-white"
             >PRO</Badge
           >
         </Card>

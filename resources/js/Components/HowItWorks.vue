@@ -43,19 +43,19 @@ const HowItWorksList: HowItWorksProps[] = [
 
 <template>
   <section    
-    class="w-[90%] 2xl:w-[75%] mx-auto py-24 sm:py-32 "
+    class="mx-auto w-[90%] pt-14 sm:pt-20 lg:pt-[130px] 2xl:w-[75%]"
   >
     <div class="text-center mb-8">
-      <h2 class="text-lg text-primary text-center mb-2 tracking-wider">
+      <h2 class="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-[#4A6CF7] sm:text-base">
         How It Works
       </h2>
 
-      <h2 class="text-3xl md:text-4xl text-center font-bold">
+      <h2 class="text-center text-3xl font-semibold text-white sm:text-4xl md:text-[50px] md:leading-[60px]">
         Step-by-Step Process
       </h2>
     </div>
 
-    <div class="lg:w-[80%] mx-auto relative">
+    <div class="relative mx-auto lg:w-[80%]">
       <div
         v-for="(
           { badgeTitle, title, description, image }, index
@@ -66,18 +66,18 @@ const HowItWorksList: HowItWorksProps[] = [
           { ' flex-row-reverse': index % 2 !== 0 },
         ]"
       >
-        <Card class="h-full bg-transparent border-0 shadow-none">
+        <Card class="h-full rounded-sm border border-[#2E333D] bg-[#1D232D]/80 shadow-none backdrop-blur">
           <CardHeader>
             <div class="pb-4">
-              <Badge class="p-1 px-2 rounded-full">{{ badgeTitle }}</Badge>
+              <Badge class="rounded-sm bg-[#4A6CF7] px-2 py-1 text-xs font-semibold text-white">{{ badgeTitle }}</Badge>
             </div>
 
-            <CardTitle class="text-2xl font-semibold leading-none tracking-tight">
+            <CardTitle class="text-xl font-semibold leading-tight tracking-tight text-white sm:text-2xl">
               {{ title }}
             </CardTitle>
           </CardHeader>
 
-          <CardContent class="text-muted-foreground w-[80%]">
+          <CardContent class="w-[80%] text-base font-medium text-[#79808A]">
             {{ description }}
           </CardContent>
         </Card>
@@ -85,11 +85,11 @@ const HowItWorksList: HowItWorksProps[] = [
         <img
           :src="image"
           :alt="`Image describing ${title} `"
-          className="w-[150px]  md:w-[250px] lg:w-[300px] mx-auto -scale-x-100 hidden sm:block"
+          class="mx-auto hidden w-[150px] -scale-x-100 sm:block md:w-[250px] lg:w-[300px]"
         />
         <div
           :class="[
-            '-z-10 absolute right-0 w-44 h-72  lg:w-64 lg:h-80 rounded-full bg-primary/15 dark:bg-primary/10 blur-3xl',
+            '-z-10 absolute right-0 h-72 w-44 rounded-full bg-[#4A6CF7]/15 blur-3xl lg:h-80 lg:w-64',
             {
               'left-0': index % 2 !== 0,
             },
